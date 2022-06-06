@@ -11,11 +11,11 @@ contract DEFYToken is ERC20, Pausable, Ownable {
         _mint(msg.sender, 2500000000 * 10 ** decimals());
     }
 
-    function pause() public onlyOwner {
+    function pause() external onlyOwner {
         _pause();
     }
 
-    function unpause() public onlyOwner {
+    function unpause() external onlyOwner {
         _unpause();
     }
 
