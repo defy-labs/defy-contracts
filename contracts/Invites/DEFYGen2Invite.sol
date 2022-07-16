@@ -56,11 +56,11 @@ contract DEFYGen2Invite is ERC721, ERC721Enumerable, Pausable, AccessControl, Ow
     }
 
     /// @notice Returns the token URI for a provided token
-    /// @return Token URI in format {baseURI}/{tokenId}{_spent?}.json
+    /// @return Token URI in format {baseURI}/{tokenId}
     function tokenURI(uint256 tokenId) public view override returns (string memory) {
         require(_exists(tokenId), "DEFYGen2Invite: URI query for nonexistent token");
 
-        return string(abi.encodePacked(_inviteBaseURI, Strings.toString(tokenId), '.json'));
+        return string(abi.encodePacked(_inviteBaseURI, Strings.toString(tokenId)));
     }
 
     /// @notice Pause the contract, preventing transfers and token spending
