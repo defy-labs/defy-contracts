@@ -25,6 +25,14 @@ Current series mappings are as below:
 * Polygon (Mainnet) - `0x27c91aC770cAe37Db870aa01737Ac50EE31067A7`
   * Updated (2022-04-27T04:19:48.844Z)
 
+**Invite Contract - Uprising**
+* Polygon (Mumbai) - `0xFc6A13353Bf45462e304218EA51ACd72Da6430c4`
+  * Updated (2022-07-18T08:36:06.038Z)
+* Polygon (Mainnet) - Tier 1 - `0xa3b7945a9a964e6a8434c2dfa249181a818a5cd2`
+  * Updated (2022-07-18T12:36:47.277Z)
+* Polygon (Mainnet) - Tier 2 - ``
+  * Updated (2022-07-18T12:36:47.277Z)
+
 **Mask Contract**
 * Polygon (Mumbai) - `0x5f4D7c752Aff818c903F1fb2f3b2B5692Ff375D7`
   * Updated (2022-03-26T00:12:34.494Z)
@@ -75,6 +83,13 @@ Current series mappings are as below:
 * Premium: 0.0005 LINK
 
 ## Hardhat Info
+
+To deploy contracts, create a deployment script in `scripts/deployment`, and run it with:
+
+`npx hardhat run ./scripts/deployment/{script}.js --network { polygon | polygon_mumbai }`
+
+Verify it with:
+`npx hardhat verify {address} --network { polygon | polygon_mumbai }`
 
 Try running some of the following tasks:
 

@@ -9,11 +9,11 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/utils/Strings.sol"; 
 
-import "./IDEFYGen2Invite.sol";
+import "./IDEFYUprisingInvite.sol";
 
 /// @author The DEFY Labs team
-/// @title DEFY Genesis Invite NFTs
-contract DEFYGen2Invite is ERC721, ERC721Enumerable, Pausable, AccessControl, Ownable, IDEFYGen2Invite {
+/// @title DEFY Uprising Invite NFTs
+contract DEFYUprisingInvite is ERC721, ERC721Enumerable, Pausable, AccessControl, Ownable, IDEFYUprisingInvite {
     using Counters for Counters.Counter;
 
     // Roles
@@ -36,7 +36,7 @@ contract DEFYGen2Invite is ERC721, ERC721Enumerable, Pausable, AccessControl, Ow
     // Event emitted when a token was successfully spent
     event InviteSpent(uint256 tokenId, address spender);
 
-    constructor() ERC721("DEFYGen2Invite", "DG2I") {
+    constructor() ERC721("DEFYUprisingInvite", "DUI") {
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
     }
 
@@ -56,11 +56,11 @@ contract DEFYGen2Invite is ERC721, ERC721Enumerable, Pausable, AccessControl, Ow
     }
 
     /// @notice Returns the token URI for a provided token
-    /// @return Token URI in format {baseURI}/{tokenId}
+    /// @return Token URI in format {baseURI}
     function tokenURI(uint256 tokenId) public view override returns (string memory) {
-        require(_exists(tokenId), "DEFYGen2Invite: URI query for nonexistent token");
+        require(_exists(tokenId), "DEFYUprisingInvite: URI query for nonexistent token");
 
-        return string(abi.encodePacked(_inviteBaseURI, Strings.toString(tokenId)));
+        return _inviteBaseURI;
     }
 
     /// @notice Pause the contract, preventing transfers and token spending
@@ -117,10 +117,10 @@ contract DEFYGen2Invite is ERC721, ERC721Enumerable, Pausable, AccessControl, Ow
 		public
 		whenNotPaused
 		onlyRole(INVITE_SPENDER_ROLE)
-		override(IDEFYGen2Invite)
+		override(IDEFYUprisingInvite)
 	{
         // Require the spender of the invite to be the current owner. We can trust the spender passed here as only the INVITE_SPENDER can call this function,
-        require(spender == ownerOf(tokenId), 'DEFYGenesisInvite: address does not own invite');
+        require(spender == ownerOf(tokenId), 'DEFYUprisingInvite: address does not own invite');
 
 		// Burn the invite, preventing it being sold again
         _burn(tokenId);
@@ -132,10 +132,10 @@ contract DEFYGen2Invite is ERC721, ERC721Enumerable, Pausable, AccessControl, Ow
     function getOriginalOwner (uint256 tokenId)
 		public
 		view
-		override(IDEFYGen2Invite) 
+		override(IDEFYUprisingInvite) 
 		returns (address)
 	{
-        require(_exists(tokenId), "DEFYGenesisInvite: metadata query for nonexistent token");
+        require(_exists(tokenId), "DEFYUprisingInvite: metadata query for nonexistent token");
         return _tokenOriginalOwners[tokenId];
     }
 
