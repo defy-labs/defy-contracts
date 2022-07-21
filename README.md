@@ -33,6 +33,12 @@ Current series mappings are as below:
 * Polygon (Mainnet) - Tier 2 - ``
   * Updated (2022-07-18T12:36:47.277Z)
 
+**Decal Contract**
+* Polygon (Mumbai) - `0x74b4019736ca3cd0f467378aa041686f9b32e9f2`
+  * Updated (2022-07-19T04:57:56.000Z)
+* Polygon (Mainnet) - `0x6cb7f5e526d8339fab5eafe0a767cbc722ca91ae`
+  * Updated (2022-07-20T03:31:25.000Z)
+
 **Mask Contract**
 * Polygon (Mumbai) - `0x5f4D7c752Aff818c903F1fb2f3b2B5692Ff375D7`
   * Updated (2022-03-26T00:12:34.494Z)

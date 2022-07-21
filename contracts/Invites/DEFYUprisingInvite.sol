@@ -125,7 +125,7 @@ contract DEFYUprisingInvite is ERC721, ERC721Enumerable, Pausable, AccessControl
 		// Burn the invite, preventing it being sold again
         _burn(tokenId);
 		
-        emit InviteSpent(tokenId, spender);    
+        emit InviteSpent(tokenId, spender);
     }
 
     /// @notice Get the invite metadata for the specified tokenId
