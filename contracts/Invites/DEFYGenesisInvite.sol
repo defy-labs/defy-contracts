@@ -148,7 +148,7 @@ contract DEFYGenesisInvite is ERC721, ERC721Enumerable, Pausable, AccessControl,
         // Update the invite state to spent
         _tokenMetadata[tokenId].inviteState = InviteState.SPENT;
 
-        emit InviteSpent(tokenId, spender);    
+        emit InviteSpent(tokenId, spender);
     }
 
     /// @notice Get the invite metadata for the specified tokenId
