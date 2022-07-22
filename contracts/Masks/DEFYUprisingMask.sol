@@ -102,6 +102,7 @@ contract DEFYUprisingMask is ERC721, ERC721Enumerable, Pausable, AccessControl, 
       _safeMint(to, tokenId);
     }
 
+	/// @notice function to apply a decal to a mask and store the metadata onchain
     function applyDecal(uint256 maskId, address decalContractAddress, uint256 decalTokenId, uint8 maskSlotId)
         public
         onlyRole(DECAL_APPLIER)
@@ -115,6 +116,11 @@ contract DEFYUprisingMask is ERC721, ERC721Enumerable, Pausable, AccessControl, 
             tokenId: decalTokenId
         });
     }
+
+    /// @notice View function to get the applied decal for a particular mask slot
+	function getAppliedDecalForMaskSlot(uint256 maskId, uint8 maskSlotId) public view returns (AppliedDecal memory) {
+		return _appliedDecals[maskId][maskSlotId];
+	}
 
     /// @notice Admin mask minting function, allowing admins to airdrop masks for free, up to the reserved amount
     function adminMintMask(address to)
