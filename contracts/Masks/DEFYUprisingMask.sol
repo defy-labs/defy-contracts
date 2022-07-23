@@ -75,7 +75,7 @@ contract DEFYUprisingMask is ERC721, ERC721Enumerable, Pausable, AccessControl, 
     function tokenURI(uint256 tokenId) public view override returns (string memory) {
       require(_exists(tokenId), "DG2M: URI query for nonexistent token");
 
-      return string(abi.encodePacked(_maskBaseURI, Strings.toString(tokenId)));
+      return string(abi.encodePacked(_maskBaseURI, Strings.toString(tokenId), ".json"));
     }
 
     /// @notice Pause the contract, preventing public minting and transfers
