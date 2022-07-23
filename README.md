@@ -54,14 +54,16 @@ Current series mappings are as below:
   * Updated (2022-03-25T13:38:20.960Z)
 
 **Uprising Mask Contract**
-* Polygon (Mumbai) - `0x5dca8b930bf6dc68edcdf5cc66e9657fd9593c49`
-  * Updated (2022-07-21T05:48:40.494Z)
-* Polygon (Mainnet) - `0x2C504FcE1785C87a3393aCA1Bb9aeFb86BA6aA22`
-  * Updated (2022-07-22T09:59:00.960Z)
+* Polygon (Mumbai) - `0x079C888558a553de2aC6D10d7877fEc5a63297b3`
+  * Updated (2022-07-23T03:06:00.494Z)
+* Polygon (Mainnet) - `0x0973f5e8A888f3172c056099EB053879dE972684`
+  * Updated (2022-07-23T03:11:00.960Z)
 
 **Uprising Phase One Sale Contract**
-* Polygon (Mumbai) - `0xd5882630A05F8e474b80243B29e14a907590a61c`
-  * Updated (2022-07-21T13:00:00.000Z)
+* Polygon (Mumbai) - `0xFFa85909698Fc3Cb2BaebF0C1B2D26bDF72fa546`
+  * Updated (2022-07-23T03:20:00.000Z)
+* Polygon (Mainnet) - `0x626979d5f00Df77Fee1Be2FD1Ec226cEF1F0bBE3`
+  * Updated (2022-07-23T03:46:48.000Z)
 
 ## Contract deployment steps
 ### Invite Contract
