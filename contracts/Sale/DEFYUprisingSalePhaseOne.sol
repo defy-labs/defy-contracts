@@ -3,12 +3,17 @@ pragma solidity ^0.8.4;
 
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
+import "@openzeppelin/contracts/utils/Counters.sol";
 
 import "../Invites/IDEFYUprisingInvite.sol";
 import "../Masks/IDEFYUprisingMask.sol";
 
 /// @custom:security-contact michael@defylabs.xyz
 contract DEFYUprisingSalePhaseOne is Pausable, AccessControl {
+	using Counters for Counters.Counter;
+
+	Counters.Counter private _phaseMintedCounter;
+
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
 	bytes32 public constant BALANCE_WITHDRAWER_ROLE = keccak256("BALANCE_WITHDRAWER_ROLE");
 
@@ -29,7 +34,7 @@ contract DEFYUprisingSalePhaseOne is Pausable, AccessControl {
     uint256 public mintPrice;
 
 	// Mapping from phase id to total supply. ie, to cap phase 1 of the mint at 2000 masks, mintPhaseTotalSupply[1] == 2000
-	mapping(uint256 => uint256) public mintPhaseTotalSupply;
+	uint256 public mintPhaseTotalSupply;
 
     constructor(address tier1Address, address tier2Address, address uprisingMaskAddress) {
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
@@ -40,7 +45,7 @@ contract DEFYUprisingSalePhaseOne is Pausable, AccessControl {
 
 		defyUprisingMask = IDEFYUprisingMask(uprisingMaskAddress);
 
-		mintPhaseTotalSupply[1] = 2000;
+		mintPhaseTotalSupply = 2000;
 		mintPrice = 160 ether;
 		tier1MintActive = false;
 		tier2MintActive = false;
@@ -55,6 +60,11 @@ contract DEFYUprisingSalePhaseOne is Pausable, AccessControl {
     function unpause() public onlyRole(PAUSER_ROLE) {
         _unpause();
     }
+
+	/// @notice Admin function to allow updating of mint phase total supply
+	function setMintPhaseTotalSupply(uint256 totalSupply) external onlyRole(DEFAULT_ADMIN_ROLE) {
+		mintPhaseTotalSupply = totalSupply;
+	}
 
 	/// @notice Admin function to allow updating of tier 1 contract address
     function updateInviteTier1ContractAddress(address contractAddress) public onlyRole(DEFAULT_ADMIN_ROLE) {
@@ -111,7 +121,11 @@ contract DEFYUprisingSalePhaseOne is Pausable, AccessControl {
 			require(tier2MintActive, 'DEFYUprisingSale: tier 2 invite sale not active');
 		}
 
+		uint256 currentTokenCount = _phaseMintedCounter.current();
+
 		uint256 totalInvites = tier1Invites.length + tier2Invites.length;
+
+		require((currentTokenCount + totalInvites) <= mintPhaseTotalSupply, 'DEFYUprisingSale: Trying to mint too many masks');
 
 		require(msg.value == mintPrice * totalInvites, 'DEFYUprisingSale: incorrect token amount sent to mint');
 
@@ -130,6 +144,8 @@ contract DEFYUprisingSalePhaseOne is Pausable, AccessControl {
 			(bool success,) = inviteOriginalOwner.call{value : msg.value / totalInvites / tier1CommissionDivisor}('');
 
 			require(success, "DEFYUprisingSale: tier 1 commission payment failed");
+
+			_phaseMintedCounter.increment();
 		}
 
 		for (uint256 i = 0; i < tier2Invites.length; i++) 
@@ -147,6 +163,8 @@ contract DEFYUprisingSalePhaseOne is Pausable, AccessControl {
 			(bool success,) = inviteOriginalOwner.call{value : msg.value / totalInvites / tier2CommissionDivisor}('');
 
 			require(success, "DEFYUprisingSale: tier 2 commission payment failed");
+
+			_phaseMintedCounter.increment();
 		}
 	}
 
