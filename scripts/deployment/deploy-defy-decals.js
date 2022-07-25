@@ -21,7 +21,7 @@ async function main() {
 
   await defyDecals.deployed();
 
-  console.log("defyUprisingInvite deployed to:", defyDecals.address);
+  console.log("defyDecals deployed to:", defyDecals.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
