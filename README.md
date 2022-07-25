@@ -1,10 +1,25 @@
-# DEFY Polygon Contracts
+# DEFY Smart Contracts
 
 This project uses a basic Hardhat setup for building and deploying.
 
 This repository contains the contracts used for the DEFY game.
 
-## Invitation contracts
+## Contract deployment addresses
+
+| **Contract**               | **Polygon Mainnet**                        | _Updated_                | **Polygon Mumbai**                         | _Updated_                |
+|----------------------------|--------------------------------------------|--------------------------|--------------------------------------------|--------------------------|
+| Genesis Invite - Phase One | 0x48697417f102663BeA75a52CcCc7bD5da9e8705f | 2022-03-24T12:15:10.719Z | 0xC2D213d11f01215F9714B9B2504840e13A62c013 | 2022-03-24T12:14:17.719Z |
+| Genesis Invite - Phase Two | 0x27c91aC770cAe37Db870aa01737Ac50EE31067A7 | 2022-04-27T04:19:48.844Z |                                            |                          |
+| Uprising Invite - Tier One | 0xa3b7945a9a964e6a8434c2dfa249181a818a5cd2 | 2022-07-18T12:36:47.277Z | 0xFc6A13353Bf45462e304218EA51ACd72Da6430c4 | 2022-07-18T08:36:06.038Z |
+| Uprising Invite - Tier Two | 0x9162c5dcD344B9B3C2527A77a8C2cd7F1334b6e7 | 2022-07-18T12:36:47.277Z | 0xc8Aa0FE090b17CcF594C31FFC314844eE625e900 | 2022-07-22T17:14:00.000Z |
+| Genesis Masks              | 0xfD257dDf743DA7395470Df9a0517a2DFbf66D156 | 2022-03-26T00:56:12.494Z | 0x5f4D7c752Aff818c903F1fb2f3b2B5692Ff375D7 | 2022-03-26T00:12:34.494Z |
+| Phantom Galaxies Masks     | 0x76D2Bc6575D60D190654384Aa6Ec98215789eF43 | 2022-03-25T13:38:20.960Z | 0xB599F3eAE4D9c5894dAc7934B0e5d6902A6D1502 | 2022-03-26T00:12:34.494Z |
+| Uprising Masks             | 0x0973f5e8A888f3172c056099EB053879dE972684 | 2022-07-23T03:11:00.960Z | 0x079C888558a553de2aC6D10d7877fEc5a63297b3 | 2022-07-23T03:06:00.494Z |
+| DEFY Decals                | 0xd753b94df74a54c76e54cf4c327094d1dfc35ebc | 2022-07-20T03:31:25.000Z | 0x74b4019736ca3cd0f467378aa041686f9b32e9f2 | 2022-07-19T04:57:56.000Z |
+| DEFY Badges                | 0x86Aad261465A1f7432efb8618D6736e910025c69 | 2022-07-25T03:53:00.000Z | 0x7023662dF3D6fDd2E9D948540e22a3a6e174CD00 | 2022-07-25T03:47:00.000Z |
+| Uprising Phase One Sale    | 0x626979d5f00Df77Fee1Be2FD1Ec226cEF1F0bBE3 | 2022-07-23T03:46:48.000Z | 0xFFa85909698Fc3Cb2BaebF0C1B2D26bDF72fa546 | 2022-07-23T03:20:00.000Z |
+
+## Genesis Invitation contracts
 
 Invites belong to a particular "series".  Each series has an 8 bit numeric id, with the default being 0.  Each series maintains its own counter, which starts at 0 and increments by 1 for each new token. The token ID is offset by the series id multiplied by a fixed offset.  At the time of writing, this offset is set to 100,000.  This means that token 1 for series 0 will have an id of 1, and token 1 for series 1 will have an id of 100001.
 
@@ -12,58 +27,6 @@ Current series mappings are as below:
 * Series 0 - Phase 1 General Genesis invites
 * Series 1 - Phase 1 Phantom Galaxies invites
 * Series 2 - Phase 2 General Genesis invites
-
-## Contract deployment addresses
-
-**Invite Contract - Phase One**
-* Polygon (Mumbai) - `0xC2D213d11f01215F9714B9B2504840e13A62c013`
-  * Updated (2022-03-24T12:14:17.719Z)
-* Polygon (Mainnet) - `0x48697417f102663BeA75a52CcCc7bD5da9e8705f`
-  * Updated (2022-03-24T12:15:10.719Z)
-
-**Invite Contract - Phase Two**
-* Polygon (Mainnet) - `0x27c91aC770cAe37Db870aa01737Ac50EE31067A7`
-  * Updated (2022-04-27T04:19:48.844Z)
-
-**Invite Contract - Uprising**
-* Polygon (Mumbai) - Tier 1 - `0xFc6A13353Bf45462e304218EA51ACd72Da6430c4`
-  * Updated (2022-07-18T08:36:06.038Z)
-* Polygon (Mumbai) - Tier 2 - `0xc8Aa0FE090b17CcF594C31FFC314844eE625e900`
-  * Updated (2022-07-22T17:14:00.000Z)
-* Polygon (Mainnet) - Tier 1 - `0xa3b7945a9a964e6a8434c2dfa249181a818a5cd2`
-  * Updated (2022-07-18T12:36:47.277Z)
-* Polygon (Mainnet) - Tier 2 - `0x9162c5dcD344B9B3C2527A77a8C2cd7F1334b6e7`
-  * Updated (2022-07-18T12:36:47.277Z)
-
-**Decal Contract**
-* Polygon (Mumbai) - `0x74b4019736ca3cd0f467378aa041686f9b32e9f2`
-  * Updated (2022-07-19T04:57:56.000Z)
-* Polygon (Mainnet) - `0x6cb7f5e526d8339fab5eafe0a767cbc722ca91ae`
-  * Updated (2022-07-20T03:31:25.000Z)
-
-**Genesis Mask Contract**
-* Polygon (Mumbai) - `0x5f4D7c752Aff818c903F1fb2f3b2B5692Ff375D7`
-  * Updated (2022-03-26T00:12:34.494Z)
-* Polygon (Mainnet) - `0xfD257dDf743DA7395470Df9a0517a2DFbf66D156`
-  * Updated (2022-03-26T00:56:12.494Z)
-
-**PG Mask Contract**
-* Polygon (Mumbai) - `0xB599F3eAE4D9c5894dAc7934B0e5d6902A6D1502`
-  * Updated (2022-03-26T00:12:34.494Z)
-* Polygon (Mainnet) - `0x76D2Bc6575D60D190654384Aa6Ec98215789eF43`
-  * Updated (2022-03-25T13:38:20.960Z)
-
-**Uprising Mask Contract**
-* Polygon (Mumbai) - `0x079C888558a553de2aC6D10d7877fEc5a63297b3`
-  * Updated (2022-07-23T03:06:00.494Z)
-* Polygon (Mainnet) - `0x0973f5e8A888f3172c056099EB053879dE972684`
-  * Updated (2022-07-23T03:11:00.960Z)
-
-**Uprising Phase One Sale Contract**
-* Polygon (Mumbai) - `0xFFa85909698Fc3Cb2BaebF0C1B2D26bDF72fa546`
-  * Updated (2022-07-23T03:20:00.000Z)
-* Polygon (Mainnet) - `0x626979d5f00Df77Fee1Be2FD1Ec226cEF1F0bBE3`
-  * Updated (2022-07-23T03:46:48.000Z)
 
 ## Contract deployment steps
 ### Invite Contract
