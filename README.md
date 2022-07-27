@@ -4,7 +4,12 @@ This project uses a basic Hardhat setup for building and deploying.
 
 This repository contains the contracts used for the DEFY game.
 
-## Contract deployment addresses
+## Contract deployment addresses (Ethereum)
+| **Contract**               | **Ethereum Mainnet**                       | _Updated_                | **Ethereum Testnet**                       | _Updated_                |
+|----------------------------|--------------------------------------------|--------------------------|--------------------------------------------|--------------------------|
+| DEFY Token                 | 0x205eD31C867bF715E4182137Af95AFE9177Cd8E7 | 2022-03-24T12:15:10.719Z |                                            |                          |
+
+## Contract deployment addresses (Polygon)
 
 | **Contract**               | **Polygon Mainnet**                        | _Updated_                | **Polygon Mumbai**                         | _Updated_                |
 |----------------------------|--------------------------------------------|--------------------------|--------------------------------------------|--------------------------|
@@ -18,6 +23,8 @@ This repository contains the contracts used for the DEFY game.
 | DEFY Decals                | 0xd753b94df74a54c76e54cf4c327094d1dfc35ebc | 2022-07-20T03:31:25.000Z | 0x74b4019736ca3cd0f467378aa041686f9b32e9f2 | 2022-07-19T04:57:56.000Z |
 | DEFY Badges                | 0x86Aad261465A1f7432efb8618D6736e910025c69 | 2022-07-25T03:53:00.000Z | 0x7023662dF3D6fDd2E9D948540e22a3a6e174CD00 | 2022-07-25T03:47:00.000Z |
 | Uprising Phase One Sale    | 0x626979d5f00Df77Fee1Be2FD1Ec226cEF1F0bBE3 | 2022-07-23T03:46:48.000Z | 0xFFa85909698Fc3Cb2BaebF0C1B2D26bDF72fa546 | 2022-07-23T03:20:00.000Z |
+
+
 
 ## Genesis Invitation contracts
 

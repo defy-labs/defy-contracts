@@ -2,7 +2,7 @@ require('dotenv').config();
 require("@nomiclabs/hardhat-waffle");
 require("@nomiclabs/hardhat-etherscan");
 
-const { API_URL, MUMBAI_API_URL, PRIVATE_KEY, POLYGONSCAN_API_KEY } = process.env;
+const { MAINNET_API_URL, POLYGON_API_URL, MUMBAI_API_URL, PRIVATE_KEY, ETHERSCAN_API_KEY, POLYGONSCAN_API_KEY } = process.env;
 
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
@@ -33,8 +33,12 @@ module.exports = {
   defaultNetwork: "hardhat",
   networks: {
     hardhat: {},
+    mainnet: {
+      url: MAINNET_API_URL ?? '',
+      accounts: PRIVATE_KEY ? [`0x${PRIVATE_KEY}`] : []
+    },
     polygon: {
-      url: API_URL ?? '',
+      url: POLYGON_API_URL ?? '',
       accounts: PRIVATE_KEY ? [`0x${PRIVATE_KEY}`] : []
     },
     polygon_mumbai: {
@@ -44,8 +48,9 @@ module.exports = {
   },
   etherscan: {
     apiKey: {
+      mainnet: ETHERSCAN_API_KEY ?? '',
       polygonMumbai: POLYGONSCAN_API_KEY ?? '',
-      polygon: POLYGONSCAN_API_KEY ?? ''
+      polygon: POLYGONSCAN_API_KEY ?? '',
     }
   }
 };
