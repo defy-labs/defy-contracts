@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 /// @custom:security-contact security@defylabs.xyz
 contract DEFYToken is ERC20, Pausable, Ownable {
-    constructor() ERC20("DEFYToken", "DEFY") {
+    constructor() ERC20("DEFY", "DEFY") {
         _mint(msg.sender, 2500000000 * 10 ** decimals());
     }
 
