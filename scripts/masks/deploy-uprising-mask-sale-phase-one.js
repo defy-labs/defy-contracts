@@ -16,9 +16,9 @@ async function main() {
   const env = 'PROD' // 'DEV' || 'PROD'
 
   const addresses = {
-	inviteTier1: env === 'DEV' ? '0xFc6A13353Bf45462e304218EA51ACd72Da6430c4' : '0xa3b7945a9a964e6a8434c2dfa249181a818a5cd2',
-	inviteTier2: env === 'DEV' ? '0xc8Aa0FE090b17CcF594C31FFC314844eE625e900' : '0x9162c5dcD344B9B3C2527A77a8C2cd7F1334b6e7',
-	uprisingMask: env === 'DEV' ? '0x079C888558a553de2aC6D10d7877fEc5a63297b3' : '0x0973f5e8A888f3172c056099EB053879dE972684',
+		token: env === 'DEV' ? '0xa2c03abbd5cd696c97061907f17a28a9f7a108ba' : '0xBF9f916bBda29A7F990F5F55c7607D94D7C3A60b',
+		inviteTier1: env === 'DEV' ? '0xFc6A13353Bf45462e304218EA51ACd72Da6430c4' : '0xa3b7945a9a964e6a8434c2dfa249181a818a5cd2',
+		uprisingMask: env === 'DEV' ? '0x079C888558a553de2aC6D10d7877fEc5a63297b3' : '0x0973f5e8A888f3172c056099EB053879dE972684',
   }
 
   // We get the contract to deploy
