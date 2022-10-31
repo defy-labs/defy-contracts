@@ -14,15 +14,16 @@ async function main() {
 	// manually to make sure everything is compiled
 	// await hre.run('compile');
 
-	const env = 'DEV' // 'DEV' || 'PROD'
+	const env = 'PROD' // 'DEV' || 'PROD'
 
 	const addresses = {
 		token: env === 'DEV' ? '0xa2c03abbd5cd696c97061907f17a28a9f7a108ba' : '0xBF9f916bBda29A7F990F5F55c7607D94D7C3A60b',
 		inviteTier1: env === 'DEV' ? '0xFc6A13353Bf45462e304218EA51ACd72Da6430c4' : '0xa3b7945a9a964e6a8434c2dfa249181a818a5cd2',
 		uprisingMask: env === 'DEV' ? '0x079C888558a553de2aC6D10d7877fEc5a63297b3' : '0x0973f5e8A888f3172c056099EB053879dE972684',
+		hotWallet: env === 'DEV' ? '0xcdA56c0EeDB40c0F292CD42A68E1C3AC83DAdef1' : '0xAE2BF730327e95f3998F730aD31CffF29382AaBD'
 	}
 
-	const saleStartTime = Math.round(new Date().getTime() / 1000)
+	const saleStartTime = Math.round(new Date('2022-09-06T00:00:00.000Z').getTime() / 1000)
 
 	// We get the contract to deploy
 	console.log('Attaching invite contracts')
@@ -50,10 +51,13 @@ async function main() {
 	console.log('granting MINTER_ROLE role on mask contract')
 	await defyUprisingMask.grantRole('0x9f2df0fed2c77648de5860a4cc508cd0818c85b8b8a1ab4ceeef8d981c8956a6', defyUprisingSalePhaseTwo.address);
 
+	console.log('granting APP_MINTER_ROLE role on mask contract')
+	await defyUprisingSalePhaseTwo.grantRole('0xade562200b65c5ad4113d46be0a8ba90f65358fa53a92ee6cb2f95159ff82402', addresses.hotWallet);
+
 	console.log("defyUprisingSalePhaseTwo deployed to:", defyUprisingSalePhaseTwo.address);
 
-	console.log("waiting 10s then verifying...");
-	await new Promise(r => setTimeout(r, 10000));
+	console.log("waiting 30s then verifying...");
+	await new Promise(r => setTimeout(r, 30000));
 
 	console.log("verifying");
 	await hre.run("verify:verify", {

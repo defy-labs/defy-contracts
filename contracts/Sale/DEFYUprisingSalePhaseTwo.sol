@@ -28,7 +28,7 @@ contract DEFYUprisingSalePhaseTwo is Pausable, AccessControl {
     uint256 public availableInviteMasksPerWindow = 20;
     uint256 public mintWindowOffset = 0;
 
-    uint256 public mintPriceInDefy = 3000 ether;
+    uint256 public mintPriceInDefy = 6000 ether;
 
     /**
      * Receiver address for all token transfers.
@@ -275,7 +275,7 @@ contract DEFYUprisingSalePhaseTwo is Pausable, AccessControl {
         }
     }
 
-    function mintMasksFromBlackmarketPurchase(uint256 count) public whenNotPaused onlyRole(APP_MINTER_ROLE) {
+    function mintMasksFromBlackmarketPurchase(uint256 count, address operativeWalletAddress) public whenNotPaused onlyRole(APP_MINTER_ROLE) {
         require (count > 0, "DEFYUprisingSalePhaseTwo: count must be greater than 0");
 
         uint256 currentMintWindow = getMintWindow(getCurrentTime());
@@ -288,7 +288,7 @@ contract DEFYUprisingSalePhaseTwo is Pausable, AccessControl {
 
         // Mint the approved count of masks
         for (uint256 i = 0; i < count; i++) {
-            defyUprisingMask.mintMask(msg.sender);
+            defyUprisingMask.mintMask(operativeWalletAddress);
             mintWindowCounters[currentMintWindow].increment();
         }
     }

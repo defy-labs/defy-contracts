@@ -5,7 +5,10 @@
 // Runtime Environment's members available in the global scope.
 const { ethers } = require("hardhat");
 
-const addresses = require("../temp/uprising/owners-pg.json")
+const tokenContract = '0x86aad261465a1f7432efb8618d6736e910025c69'
+const tokenId = 11
+
+const addresses = require("../temp/badges/alpha_all_mission1.json").map(a => a.ConnectedWalletAddress)
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -27,17 +30,20 @@ async function main() {
   // await hre.run('compile');
 
   // We get the contract to deploy
-  const DEFYUprisingInvite = await ethers.getContractFactory("DEFYUprisingInvite");
-  const defyUprisingInvite = await DEFYUprisingInvite.attach("0x9162c5dcD344B9B3C2527A77a8C2cd7F1334b6e7")
+  const BatchAirdrop = await ethers.getContractFactory("BatchAirdrop");
+  const batchAirdrop = await BatchAirdrop.attach("0x4b433b9A785C5F38f425F06AFeECAebBF4A1A752")
 
   const chunkSize = 60;
   for (let i = 0; i < addresses.length; i += chunkSize) {
       const chunk = addresses.slice(i, i + chunkSize);
-			const tokenIds = Array.from({length: addresses.length}, () => tokenIds)
-			const tokenCounts = Array.from({length: addresses.length}, () => 1)
+			const tokenIds = Array.from({length: chunk.length}, () => tokenId)
+			const tokenCounts = Array.from({length: chunk.length}, () => 1)
 
       console.log(`${i}: ${chunk[0]} - ${chunk[chunkSize-1]}`)
-      await defyUprisingInvite.safeMint_batch(chunk, , { gasPrice: 100000000000, gasLimit: 10000000 })
+			// console.log(tokenIds)
+			// console.log(tokenCounts)
+			// console.log(chunk)
+      await batchAirdrop.batchAirdrop1155(tokenContract, chunk, tokenIds, tokenCounts, { gasPrice: 100000000000, gasLimit: 10000000 })
       console.log('done')
       await sleep(1000)
   }

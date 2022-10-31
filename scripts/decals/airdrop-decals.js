@@ -5,7 +5,7 @@
 // Runtime Environment's members available in the global scope.
 const { ethers } = require("hardhat");
 
-const addresses = require("../temp/uprising/owners-pg.json")
+const addresses = require("../temp/decals/drone-killer.json")
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -27,19 +27,13 @@ async function main() {
   // await hre.run('compile');
 
   // We get the contract to deploy
-  const DEFYUprisingInvite = await ethers.getContractFactory("DEFYUprisingInvite");
-  const defyUprisingInvite = await DEFYUprisingInvite.attach("0x9162c5dcD344B9B3C2527A77a8C2cd7F1334b6e7")
+  const DEFYDecals = await ethers.getContractFactory("DEFYDecals");
+  const defyDecals = await DEFYDecals.attach("0xd753b94df74a54c76e54cf4c327094d1dfc35ebc")
 
-  const chunkSize = 60;
-  for (let i = 0; i < addresses.length; i += chunkSize) {
-      const chunk = addresses.slice(i, i + chunkSize);
-			const tokenIds = Array.from({length: addresses.length}, () => tokenIds)
-			const tokenCounts = Array.from({length: addresses.length}, () => 1)
-
-      console.log(`${i}: ${chunk[0]} - ${chunk[chunkSize-1]}`)
-      await defyUprisingInvite.safeMint_batch(chunk, , { gasPrice: 100000000000, gasLimit: 10000000 })
-      console.log('done')
-      await sleep(1000)
+  for (let i = 0; i < addresses.length; i++) {
+		const address = addresses[i].ConnectedWalletAddress
+		console.log(`minting to ${address}`)
+		await defyDecals.mint(address, 26, 1, "0xd753b94df74a54c76e54cf4c327094d1dfc35ebc", { gasPrice: 50000000000 })
   }
 }
 
