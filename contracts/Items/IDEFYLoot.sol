@@ -11,7 +11,7 @@ import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
  *
  * _Available since v3.1._
  */
-interface IERC1155 is IERC165 {
+interface IDEFYLoot is IERC165 {
     /**
      * @dev Emitted when `value` tokens of token type `id` are transferred from `from` to `to` by `operator`.
      */
@@ -99,6 +99,9 @@ interface IERC1155 is IERC165 {
         view
         returns (bool);
 
+    /**
+     * @dev Mints an amount of ERC1155 tokens of id, to the account address.
+     */
     function mint(
         address account,
         uint256 id,
@@ -106,6 +109,9 @@ interface IERC1155 is IERC165 {
         bytes memory data
     ) external;
 
+    /**
+     * @dev Burns the amount of tokens of id owned by the owner account.
+     */
     function burnToken(
         address owner,
         uint256 id,

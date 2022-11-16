@@ -12,7 +12,7 @@ async function main() {
 
     await defyForge.deployed();
 
-    console.log("defyItems deployed to:", defyForge.address);
+    console.log("defyForge deployed to:", defyForge.address);
 
     console.log("waiting 30s then verifying...");
     await new Promise(r => setTimeout(r, 30000));
