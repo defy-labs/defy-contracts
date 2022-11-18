@@ -119,6 +119,25 @@ interface IDEFYLoot is IERC165 {
     ) external;
 
     /**
+     * @dev Mints an array of amounts of ERC1155 tokens of id, to the account address.
+     */
+    function mintBatch(
+        address to,
+        uint256[] memory ids,
+        uint256[] memory amounts,
+        bytes memory data
+    ) external;
+
+    /**
+     * @dev Mints an amount of ERC1155 tokens of id, to the multiple addresses.
+     */
+    function mintBatchMultiUser(
+        address[] calldata addresses,
+        uint256[] calldata tokenIds,
+        uint256[] calldata amounts
+    ) external;
+
+    /**
      * @dev Transfers `amount` tokens of token type `id` from `from` to `to`.
      *
      * Emits a {TransferSingle} event.

@@ -9,23 +9,22 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 contract DEFYForge is Pausable, AccessControl {
     using Counters for Counters.Counter;
     Counters.Counter private _forgeJobIds;
+    bool private _
 
     bytes32 public constant FORGER_ROLE = keccak256("FORGER_ROLE");
-    bytes32 public constant DEFYLOOT_ADMIN_ROLE =
-        keccak256("DEFYLOOT_ADMIN_ROLE");
 
     enum State {
-        processing,
-        completed,
-        cancelled,
-        failed
+        Processing,
+        Completed,
+        Cancelled,
+        Failed
     }
 
     struct ForgeJob {
-        IDEFYLoot itemContract;
+        IDEFYLoot lootContract;
         address operativeAddress;
-        uint256[] inputMaterialIds;
-        uint256[] inputMaterialAmounts;
+        uint256[] inputLootIds;
+        uint256[] inputLootAmounts;
         uint256 startTime;
         uint256 endTime;
         uint256 blueprintId;
@@ -36,39 +35,41 @@ contract DEFYForge is Pausable, AccessControl {
     // Mapping from forgeJobIds to ForgeJob struct
     mapping(uint256 => ForgeJob) private forgeJobs;
 
-    // Mapping from operative address to ForgeJobIds
+    // Mapping from operative address to ForgeJobIds of operative
     mapping(address => uint256[]) private operativesForgeJobsIds;
 
     // Mapping from IDEFYLoot to validity contract condition
-    mapping(IDEFYLoot => bool) private validItemContracts;
+    mapping(IDEFYLoot => bool) private validLootContracts;
 
     // Event indexed by operative address and forgeJobId, includes burned tokens.
-    event CreateForge(
-        address indexed _operativeAddress,
-        uint256 indexed _forgeJobId,
-        uint256[] _inputMaterialIds,
-        uint256[] _inputMaterialAmounts
+    event CreateForgeJob(
+        address indexed operativeAddress,
+        uint256 indexed forgeJobId,
+        uint256 indexed blueprintId,
+        uint256[] inputLootIds,
+        uint256[] inputLootAmounts
     );
 
     // Event indexed by operative address and forgeJobId, includes minted tokens.
-    event CompleteForge(
-        address indexed _operativeAddress,
-        uint256 indexed _forgeJobId,
-        uint256 _outputLootId
+    event CompleteForgeJob(
+        address indexed operativeAddress,
+        uint256 indexed forgeJobId,
+        uint256 indexed blueprintId,
+        uint256 outputLootId
     );
 
     // Event indexed by operative address and forgeJobId.
-    event CancelForge(
-        address indexed _operativeAddress,
-        uint256 indexed _forgeJobId,
-        uint256[] _remintedMaterialIds,
-        uint256[] _remintedMaterialAmounts
+    event CancelForgeJob(
+        address indexed operativeAddress,
+        uint256 indexed forgeJobId,
+        uint256[] remintedLootIds,
+        uint256[] remintedLootAmounts
     );
 
     // Event indexed by operative address and forgeJobId.
-    event FailForge(
-        address indexed _operativeAddress,
-        uint256 indexed _forgeJobId
+    event FailForgeJob(
+        address indexed operativeAddress,
+        uint256 indexed forgeJobId
     );
 
     constructor() {
@@ -77,82 +78,82 @@ contract DEFYForge is Pausable, AccessControl {
 
     /**
      * @dev Create a forge job for an operative.
-     *      Burns the input materials.
+     *      Burns the input loots.
      * @return the forge job id.
      */
-    // Forges (mints) a new part and burns the input materials
-    function createForge(
-        IDEFYLoot itemContract,
+    function createForgeJob(
+        IDEFYLoot lootContract,
         address operativeAddress,
-        uint256[] calldata inputMaterialIds,
-        uint256[] calldata inputMaterialAmounts,
+        uint256[] calldata inputLootIds,
+        uint256[] calldata inputLootAmounts,
         uint256 duration,
         uint256 blueprintId,
         uint256 outputLootId
     ) public onlyRole(FORGER_ROLE) returns (uint256) {
-        // require call is made to a valid item contract
+        // require call is made to a valid loot contract
         require(
-            validItemContracts[itemContract] == true,
-            "DEFYForge: Item contract not valid"
+            validLootContracts[lootContract] == true,
+            "DEFYForge: Loot contract not valid"
         );
 
         // require input arrays are not null
         require(
-            inputMaterialAmounts.length != 0 && inputMaterialIds.length != 0,
-            "DEFYForge: Invalid input materials"
+            inputLootAmounts.length != 0 && inputLootIds.length != 0,
+            "DEFYForge: Invalid input loots"
         );
 
-        // require input materials ids and amount are the same
+        // require input loots ids and amount are the same
         require(
-            inputMaterialAmounts.length == inputMaterialIds.length,
+            inputLootAmounts.length == inputLootIds.length,
             "DEFYForge: All arrays must be the same length"
         );
 
         // require operative has tokens available
-        for (uint256 i = 0; i < inputMaterialIds.length; i++) {
+        for (uint256 i = 0; i < inputLootIds.length; i++) {
             require(
-                itemContract.balanceOf(operativeAddress, inputMaterialIds[i]) >=
-                    inputMaterialAmounts[i],
-                "DEFYForge: Operative does not have suffient materials"
+                lootContract.balanceOf(operativeAddress, inputLootIds[i]) >=
+                    inputLootAmounts[i],
+                "DEFYForge: Operative does not have suffient loots"
             );
         }
 
         // create print job record
         uint256 forgeJobId = _forgeJobIds.current();
 
+        // increment _forgeJobId counter
+        _forgeJobIds.increment();
+
         // Add new forge job to storage mapping
         forgeJobs[forgeJobId] = ForgeJob(
-            itemContract,
+            lootContract,
             operativeAddress,
-            inputMaterialIds,
-            inputMaterialAmounts,
+            inputLootIds,
+            inputLootAmounts,
             timeNow(),
             timeNow() + duration,
             blueprintId,
             outputLootId,
-            State.processing
+            State.Processing
         );
 
         // Add forge job id to operatives list
         operativesForgeJobsIds[operativeAddress].push(forgeJobId);
 
-        // increment _forgeJobId counter
-        _forgeJobIds.increment();
-
-        // burn input materials
-        for (uint256 i = 0; i < inputMaterialIds.length; i++) {
-            itemContract.burnToken(
+        // burn input loots
+        for (uint256 i = 0; i < inputLootIds.length; i++) {
+            lootContract.burnToken(
                 operativeAddress,
-                inputMaterialIds[i],
-                inputMaterialAmounts[i]
+                inputLootIds[i],
+                inputLootAmounts[i]
             );
         }
 
-        emit CreateForge(
+        emit CreateForgeJob(
             operativeAddress,
             forgeJobId,
-            inputMaterialIds,
-            inputMaterialAmounts
+            blueprintId,
+            inputLootIds,
+            inputLootAmounts
         );
 
         return forgeJobId;
@@ -163,156 +164,134 @@ contract DEFYForge is Pausable, AccessControl {
      *      Mints the output loot for an operative.
      * @return the number of forge jobs
      */
-    // pass in forgeJobId and mint forged part
-    function completeForge(uint256 _forgeJobId)
+    function completeForgeJob(uint256 forgeJobId)
         public
         onlyRole(FORGER_ROLE)
         returns (address, uint256)
     {
         //require forgeJobId to be within the current bounds
         require(
-            forgeJobsCount() >= _forgeJobId,
+            getForgeJobsCount() >= forgeJobId,
             "DEFYForge: ForgeJobId out of bounds"
         );
 
         // get ForgeJob struct
-        ForgeJob memory _forgeJob = forgeJob(_forgeJobId);
+        ForgeJob memory forgeJob = getForgeJob(forgeJobId);
 
         // require forgeJob state is processing
         require(
-            _forgeJob.forgeJobState == State.processing,
-            "DEFYForge: Forge is not processing"
+            forgeJob.forgeJobState == State.Processing,
+            "DEFYForge: ForgeJob is not processing"
         );
 
         // require duration has elasped
         require(
-            _forgeJob.endTime <= block.timestamp,
-            "DEFYForge: Forge is not ready to complete"
+            forgeJob.endTime <= block.timestamp,
+            "DEFYForge: ForgeJob is not ready to complete"
         );
 
         bytes memory zeroBytes;
 
         // Mint output part
-        _forgeJob.itemContract.mint(
-            _forgeJob.operativeAddress,
-            _forgeJob.outputLootId,
+        forgeJob.lootContract.mint(
+            forgeJob.operativeAddress,
+            forgeJob.outputLootId,
             1,
             zeroBytes
         );
 
-        forgeJobs[_forgeJobId].forgeJobState = State.completed;
+        forgeJobs[forgeJobId].forgeJobState = State.Completed;
 
-        emit CompleteForge(
-            _forgeJob.operativeAddress,
-            _forgeJobId,
-            _forgeJob.outputLootId
+        emit CompleteForgeJob(
+            forgeJob.operativeAddress,
+            forgeJobId,
+            forgeJob.blueprintId,
+            forgeJob.outputLootId
         );
 
-        return (_forgeJob.operativeAddress, _forgeJob.outputLootId);
+        return (forgeJob.operativeAddress, forgeJob.outputLootId);
     }
 
     /**
      * @dev Manually cancels the forge state of forge job.
-            Input items are returned to the operative, on a pro rata basis.
-            No output item is minted.
+            Input loots are returned to the operative, on a pro rata basis.
+            No output loot is minted.
      */
-    function cancelForge(uint256 _forgeJobId) public onlyRole(FORGER_ROLE) {
+    function cancelForgeJob(uint256 forgeJobId) public onlyRole(FORGER_ROLE) {
         //require forgeJobId to be within the current bounds
         require(
-            forgeJobsCount() >= _forgeJobId,
+            forgeJobsCount() >= forgeJobId,
             "DEFYForge: ForgeJobId out of bounds"
         );
 
         // get ForgeJob struct
-        ForgeJob memory _forgeJob = forgeJob(_forgeJobId);
+        ForgeJob memory forgeJob = forgeJob(forgeJobId);
 
         // require forgeJob state is processing
         require(
-            _forgeJob.forgeJobState == State.processing,
+            forgeJob.forgeJobState == State.Processing,
             "DEFYForge: Forge has been completed"
         );
 
         // get input parts and data
-        uint256[] memory _inputMaterialsIds = _forgeJob.inputMaterialIds;
-        uint256[] memory _inputMaterialAmounts = _forgeJob.inputMaterialAmounts;
-        uint256 _duration = (_forgeJob.endTime - _forgeJob.startTime);
-        uint256 _now = block.timestamp;
+        uint256 duration = (forgeJob.endTime - forgeJob.startTime);
+        uint256 timeNow = block.timestamp;
 
-        uint256 percentOfJobCompleted = (100 * (_now - _forgeJob.startTime)) /
-            _duration;
+        uint256 percentOfJobCompleted = (100 * (timeNow - forgeJob.startTime)) /
+            duration;
 
-        uint256[] memory toMintMaterialAmount;
+        uint256[] memory toMintLootAmount;
 
         bytes memory zeroBytes;
 
-        for (uint256 i = 0; i < _inputMaterialsIds.length; i++) {
-            toMintMaterialAmount[i] =
-                (percentOfJobCompleted * _inputMaterialAmounts[i]) /
+        for (uint256 i = 0; i < forgeJob.inputLootIds.length; i++) {
+            toMintLootAmount[i] =
+                (percentOfJobCompleted * forgeJob.inputLootAmounts[i]) /
                 100;
 
             // Mint input parts, on a pro rata basis
-            _forgeJob.itemContract.mint(
-                _forgeJob.operativeAddress,
-                _inputMaterialsIds[i],
-                toMintMaterialAmount[i],
+            forgeJob.lootContract.mint(
+                forgeJob.operativeAddress,
+                forgeJob.inputLootIds[i],
+                toMintLootAmount[i],
                 zeroBytes
             );
         }
 
-        forgeJobs[_forgeJobId].forgeJobState = State.cancelled;
+        forgeJobs[forgeJobId].forgeJobState = State.cancelled;
 
-        emit CancelForge(
-            _forgeJob.operativeAddress,
-            _forgeJobId,
-            _inputMaterialsIds,
-            toMintMaterialAmount
+        emit CancelForgeJob(
+            forgeJob.operativeAddress,
+            forgeJobId,
+            forgeJob.inputLootAmounts,
+            toMintLootAmount
         );
     }
 
     /**
      * @dev Manually fails the forge state of forge job.
-            No input items are returned to the operative.
-            No output item is minted.
+            No input loots are returned to the operative.
+            No output loot is minted.
      */
-    function failForge(uint256 _forgeJobId) public onlyRole(FORGER_ROLE) {
+    function failForgeJob(uint256 forgeJobId) public onlyRole(FORGER_ROLE) {
         //require forgeJobId to be within the current bounds
         require(
-            forgeJobsCount() >= _forgeJobId,
+            forgeJobsCount() >= forgeJobId,
             "DEFYForge: ForgeJobId out of bounds"
         );
 
         // get ForgeJob struct
-        ForgeJob memory _forgeJob = forgeJob(_forgeJobId);
+        ForgeJob memory forgeJob = forgeJob(forgeJobId);
 
         // require forgeJob state is processing
         require(
-            _forgeJob.forgeJobState == State.processing,
+            forgeJob.forgeJobState == State.Processing,
             "DEFYForge: Forge has been completed"
         );
 
-        forgeJobs[_forgeJobId].forgeJobState = State.failed;
+        forgeJobs[forgeJobId].forgeJobState = State.Failed;
 
-        emit FailForge(_forgeJob.operativeAddress, _forgeJobId);
-    }
-
-    /**
-     * @dev Returns the number of forge jobs.
-     * @return the number of forge jobs.
-     */
-    function forgeJobsCount() internal view returns (uint256) {
-        return _forgeJobIds.current();
-    }
-
-    /**
-     * @notice Returns the forge job information for a given identifier.
-     * @return the forge job structure information
-     */
-    function forgeJob(uint256 forgeJobId)
-        internal
-        view
-        returns (ForgeJob memory)
-    {
-        return forgeJobs[forgeJobId];
+        emit FailForgeJob(forgeJob.operativeAddress, forgeJobId);
     }
 
     /**
@@ -339,68 +318,81 @@ contract DEFYForge is Pausable, AccessControl {
      * @dev Returns the number of forge jobs associated to an operative.
      * @return the number of forge jobs
      */
-    function getForgeJobsCountByOperative(address _operative)
+    function getForgeJobsCountByOperative(address operative)
         external
         view
         returns (uint256)
     {
-        return operativesForgeJobsIds[_operative].length;
+        return operativesForgeJobsIds[operative].length;
     }
 
     /**
      * @dev Returns the forge jobs id associated to an operative based on an array index value.
      * @return the forgejobId
      */
-    function getForgeJobIdForOwnerByIndex(address _operative, uint256 _index)
+    function getForgeJobIdForOwnerByIndex(address operative, uint256 index)
         public
         view
         returns (uint256)
     {
-        return operativesForgeJobsIds[_operative][_index];
+        return operativesForgeJobsIds[operative][index];
     }
 
     /**
      * @dev Returns the array of forge job ids for an operative.
      * @return the array of forgeJobIds
      */
-    function getAllForgeJobIdsForOwner(address _operative)
+    function getAllForgeJobIdsForOwner(address operative)
         public
         view
         returns (uint256[] memory)
     {
-        return operativesForgeJobsIds[_operative];
+        return operativesForgeJobsIds[operative];
     }
 
     /**
-     * @dev Returns the validity of the an itemContract address.
+     * @dev Returns the validity of the an lootContract address.
      * @return the boolean of validity.
      */
-    function getItemContractValidity(IDEFYLoot _itemContract)
+    function getLootContractValidity(IDEFYLoot lootContract)
         public
         view
         returns (bool)
     {
-        return validItemContracts[_itemContract];
+        return validLootContracts[lootContract];
+    }
+
+    /**
+     * @dev Returns the remaining time in seconds for an operatives forge job.
+     *      Or Returns 0 if job is ready to complete.
+     * @return remaining time for a forge job id.
+     */
+    function getRemainingTimeForForgeJob(uint256 forgeJobId) public view returns(uint256) {
+        if (forgeJobs[forgeJobId].endTime > timeNow() ){
+            return forgeJobs[forgeJobId].endTime - timeNow();
+        } else (timeNow() >= forgeJobs[forgeJobId].endTime) {
+            return 0;
+        }
     }
 
     /**
      * @dev Approves an IDEFYLoot contract address for forging.
      */
-    function approveItemContract(IDEFYLoot _IDEFYLoot)
+    function approveLootContract(IDEFYLoot IDEFYLoot)
         public
-        onlyRole(DEFYLOOT_ADMIN_ROLE)
+        onlyRole(DEFAULT_ADMIN_ROLE)
     {
-        validItemContracts[_IDEFYLoot] = true;
+        validLootContracts[IDEFYLoot] = true;
     }
 
     /**
      * @dev Revokes an IDEFYLoot contract address for forging.
      */
-    function revokeItemContract(IDEFYLoot _IDEFYLoot)
+    function revokeLootContract(IDEFYLoot IDEFYLoot)
         public
-        onlyRole(DEFYLOOT_ADMIN_ROLE)
+        onlyRole(DEFAULT_ADMIN_ROLE)
     {
-        validItemContracts[_IDEFYLoot] = false;
+        validLootContracts[IDEFYLoot] = false;
     }
 
     /**
