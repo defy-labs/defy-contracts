@@ -9,7 +9,6 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 contract DEFYForge is Pausable, AccessControl {
     using Counters for Counters.Counter;
     Counters.Counter private _forgeJobIds;
-    bool private _
 
     bytes32 public constant FORGER_ROLE = keccak256("FORGER_ROLE");
 
@@ -220,12 +219,12 @@ contract DEFYForge is Pausable, AccessControl {
     function cancelForgeJob(uint256 forgeJobId) public onlyRole(FORGER_ROLE) {
         //require forgeJobId to be within the current bounds
         require(
-            forgeJobsCount() >= forgeJobId,
+            getForgeJobsCount() >= forgeJobId,
             "DEFYForge: ForgeJobId out of bounds"
         );
 
         // get ForgeJob struct
-        ForgeJob memory forgeJob = forgeJob(forgeJobId);
+        ForgeJob memory forgeJob = getForgeJob(forgeJobId);
 
         // require forgeJob state is processing
         require(
@@ -235,10 +234,9 @@ contract DEFYForge is Pausable, AccessControl {
 
         // get input parts and data
         uint256 duration = (forgeJob.endTime - forgeJob.startTime);
-        uint256 timeNow = block.timestamp;
 
-        uint256 percentOfJobCompleted = (100 * (timeNow - forgeJob.startTime)) /
-            duration;
+        uint256 percentOfJobCompleted = (100 *
+            (timeNow() - forgeJob.startTime)) / duration;
 
         uint256[] memory toMintLootAmount;
 
@@ -258,7 +256,7 @@ contract DEFYForge is Pausable, AccessControl {
             );
         }
 
-        forgeJobs[forgeJobId].forgeJobState = State.cancelled;
+        forgeJobs[forgeJobId].forgeJobState = State.Cancelled;
 
         emit CancelForgeJob(
             forgeJob.operativeAddress,
@@ -276,12 +274,12 @@ contract DEFYForge is Pausable, AccessControl {
     function failForgeJob(uint256 forgeJobId) public onlyRole(FORGER_ROLE) {
         //require forgeJobId to be within the current bounds
         require(
-            forgeJobsCount() >= forgeJobId,
+            getForgeJobsCount() >= forgeJobId,
             "DEFYForge: ForgeJobId out of bounds"
         );
 
         // get ForgeJob struct
-        ForgeJob memory forgeJob = forgeJob(forgeJobId);
+        ForgeJob memory forgeJob = getForgeJob(forgeJobId);
 
         // require forgeJob state is processing
         require(
@@ -367,10 +365,14 @@ contract DEFYForge is Pausable, AccessControl {
      *      Or Returns 0 if job is ready to complete.
      * @return remaining time for a forge job id.
      */
-    function getRemainingTimeForForgeJob(uint256 forgeJobId) public view returns(uint256) {
-        if (forgeJobs[forgeJobId].endTime > timeNow() ){
+    function getRemainingTimeForForgeJob(uint256 forgeJobId)
+        public
+        view
+        returns (uint256)
+    {
+        if (forgeJobs[forgeJobId].endTime > timeNow()) {
             return forgeJobs[forgeJobId].endTime - timeNow();
-        } else (timeNow() >= forgeJobs[forgeJobId].endTime) {
+        } else {
             return 0;
         }
     }
@@ -378,21 +380,21 @@ contract DEFYForge is Pausable, AccessControl {
     /**
      * @dev Approves an IDEFYLoot contract address for forging.
      */
-    function approveLootContract(IDEFYLoot IDEFYLoot)
+    function approveLootContract(IDEFYLoot iDEFYLoot)
         public
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
-        validLootContracts[IDEFYLoot] = true;
+        validLootContracts[iDEFYLoot] = true;
     }
 
     /**
      * @dev Revokes an IDEFYLoot contract address for forging.
      */
-    function revokeLootContract(IDEFYLoot IDEFYLoot)
+    function revokeLootContract(IDEFYLoot iDEFYLoot)
         public
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
-        validLootContracts[IDEFYLoot] = false;
+        validLootContracts[iDEFYLoot] = false;
     }
 
     /**
