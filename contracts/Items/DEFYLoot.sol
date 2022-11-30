@@ -113,7 +113,7 @@ contract DEFYLoot is IDEFYLoot, ERC1155, AccessControl, Pausable, Ownable {
     function supportsInterface(bytes4 interfaceId)
         public
         view
-        override(ERC1155, AccessControl)
+        override(ERC1155, AccessControl, IERC165)
         returns (bool)
     {
         return super.supportsInterface(interfaceId);
