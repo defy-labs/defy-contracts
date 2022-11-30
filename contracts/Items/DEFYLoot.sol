@@ -5,13 +5,14 @@ import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
+import "./IDEFYLoot.sol";
 
 /// @custom:security-contact michael@defylabs.xyz
-contract DEFYItems is ERC1155, AccessControl, Pausable, Ownable {
+contract DEFYLoot is IDEFYLoot, ERC1155, AccessControl, Pausable, Ownable {
     bytes32 public constant URI_SETTER_ROLE = keccak256("URI_SETTER_ROLE");
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
-    bytes32 public constant DECAL_BURNER_ROLE = keccak256("DECAL_BURNER_ROLE");
+    bytes32 public constant LOOT_BURNER_ROLE = keccak256("LOOT_BURNER_ROLE");
 
     mapping(uint256 => bool) private _tokenTradingDisabled;
 
@@ -66,15 +67,10 @@ contract DEFYItems is ERC1155, AccessControl, Pausable, Ownable {
             "DEFYItems: All arrays must be the same length"
         );
 
-				bytes memory zeroBytes;
+        bytes memory zeroBytes;
 
         for (uint256 i = 0; i < addresses.length; i++) {
-            mint(
-                addresses[i],
-                tokenIds[i],
-                amounts[i],
-                zeroBytes
-            );
+            mint(addresses[i], tokenIds[i], amounts[i], zeroBytes);
         }
     }
 
@@ -82,7 +78,7 @@ contract DEFYItems is ERC1155, AccessControl, Pausable, Ownable {
         address owner,
         uint256 id,
         uint256 amount
-    ) public onlyRole(DECAL_BURNER_ROLE) {
+    ) public onlyRole(LOOT_BURNER_ROLE) {
         _burn(owner, id, amount);
     }
 
@@ -106,7 +102,7 @@ contract DEFYItems is ERC1155, AccessControl, Pausable, Ownable {
                 !_tokenTradingDisabled[ids[i]] ||
                     from == address(0) ||
                     to == address(0),
-                "DEFYBadges: Token trading has not been enabled this token"
+                "DEFYLoot: Token trading has not been enabled this token"
             );
         }
 
@@ -117,7 +113,7 @@ contract DEFYItems is ERC1155, AccessControl, Pausable, Ownable {
     function supportsInterface(bytes4 interfaceId)
         public
         view
-        override(ERC1155, AccessControl)
+        override(ERC1155, AccessControl, IERC165)
         returns (bool)
     {
         return super.supportsInterface(interfaceId);
