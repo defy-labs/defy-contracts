@@ -234,17 +234,23 @@ contract DEFYForge is Pausable, AccessControl {
 
         // get input parts and data
         uint256 duration = (forgeJob.endTime - forgeJob.startTime);
+        uint256 percentOfJobCompleted;
 
-        uint256 percentOfJobCompleted = (100 *
-            (timeNow() - forgeJob.startTime)) / duration;
+        if (timeNow() - forgeJob.startTime >= duration) {
+            percentOfJobCompleted = 100;
+        } else {
+            percentOfJobCompleted =
+                (100 * (timeNow() - forgeJob.startTime)) /
+                duration;
+        }
 
-        uint256[] memory toMintLootAmount;
+        uint256[] memory toMintLootAmount = forgeJob.inputLootAmounts;
 
         bytes memory zeroBytes;
 
         for (uint256 i = 0; i < forgeJob.inputLootIds.length; i++) {
             toMintLootAmount[i] =
-                (percentOfJobCompleted * forgeJob.inputLootAmounts[i]) /
+                ((100 - percentOfJobCompleted) * forgeJob.inputLootAmounts[i]) /
                 100;
 
             // Mint input parts, on a pro rata basis
