@@ -2,6 +2,7 @@
 pragma solidity ^0.8.9;
 
 import "./../Items/IDEFYLoot.sol";
+import "./IDEFYDrone.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
@@ -70,7 +71,7 @@ contract DEFYCraftDrone is Pausable, AccessControl {
 
         // require call is made to a valid drone contract
         require(
-            validDroneContracts[DroneContract] == true,
+            validDroneContracts[droneContract] == true,
             "DEFYCraftDrone: Drone contract not valid"
         );
 
@@ -250,7 +251,7 @@ contract DEFYCraftDrone is Pausable, AccessControl {
     /**
      * @dev Approves an IDEFYDrone contract address for crafting.
      */
-    function approveDroneContract(IDEFYLoot iDEFYDrone)
+    function approveDroneContract(IDEFYDrone iDEFYDrone)
         public
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
@@ -260,7 +261,7 @@ contract DEFYCraftDrone is Pausable, AccessControl {
     /**
      * @dev Revokes an IDEFYDrone contract address for crafting.
      */
-    function revokeDroneContract(IDEFYLoot iDEFYDrone)
+    function revokeDroneContract(IDEFYDrone iDEFYDrone)
         public
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
