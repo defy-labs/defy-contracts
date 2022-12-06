@@ -24,8 +24,6 @@ contract DEFYForge is Pausable, AccessControl {
         address operativeAddress;
         uint256[] inputLootIds;
         uint256[] inputLootAmounts;
-        uint256 startTime;
-        uint256 endTime;
         uint256 blueprintId;
         uint256 outputLootId;
         State forgeJobState;
@@ -60,9 +58,7 @@ contract DEFYForge is Pausable, AccessControl {
     // Event indexed by operative address and forgeJobId.
     event CancelForgeJob(
         address indexed operativeAddress,
-        uint256 indexed forgeJobId,
-        uint256[] remintedLootIds,
-        uint256[] remintedLootAmounts
+        uint256 indexed forgeJobId
     );
 
     // Event indexed by operative address and forgeJobId.
@@ -85,7 +81,6 @@ contract DEFYForge is Pausable, AccessControl {
         address operativeAddress,
         uint256[] calldata inputLootIds,
         uint256[] calldata inputLootAmounts,
-        uint256 duration,
         uint256 blueprintId,
         uint256 outputLootId
     ) public onlyRole(FORGER_ROLE) returns (uint256) {
@@ -128,8 +123,6 @@ contract DEFYForge is Pausable, AccessControl {
             operativeAddress,
             inputLootIds,
             inputLootAmounts,
-            timeNow(),
-            timeNow() + duration,
             blueprintId,
             outputLootId,
             State.Processing
@@ -183,12 +176,6 @@ contract DEFYForge is Pausable, AccessControl {
             "DEFYForge: ForgeJob is not processing"
         );
 
-        // require duration has elasped
-        require(
-            forgeJob.endTime <= block.timestamp,
-            "DEFYForge: ForgeJob is not ready to complete"
-        );
-
         bytes memory zeroBytes;
 
         // Mint output part
@@ -213,7 +200,7 @@ contract DEFYForge is Pausable, AccessControl {
 
     /**
      * @dev Manually cancels the forge state of forge job.
-            Input loots are returned to the operative, on a pro rata basis.
+            No input loots are returned to the operative.
             No output loot is minted.
      */
     function cancelForgeJob(uint256 forgeJobId) public onlyRole(FORGER_ROLE) {
@@ -232,44 +219,9 @@ contract DEFYForge is Pausable, AccessControl {
             "DEFYForge: Forge has been completed"
         );
 
-        // get input parts and data
-        uint256 duration = (forgeJob.endTime - forgeJob.startTime);
-        uint256 percentOfJobCompleted;
-
-        if (timeNow() - forgeJob.startTime >= duration) {
-            percentOfJobCompleted = 100;
-        } else {
-            percentOfJobCompleted =
-                (100 * (timeNow() - forgeJob.startTime)) /
-                duration;
-        }
-
-        uint256[] memory toMintLootAmount = forgeJob.inputLootAmounts;
-
-        bytes memory zeroBytes;
-
-        for (uint256 i = 0; i < forgeJob.inputLootIds.length; i++) {
-            toMintLootAmount[i] =
-                ((100 - percentOfJobCompleted) * forgeJob.inputLootAmounts[i]) /
-                100;
-
-            // Mint input parts, on a pro rata basis
-            forgeJob.lootContract.mint(
-                forgeJob.operativeAddress,
-                forgeJob.inputLootIds[i],
-                toMintLootAmount[i],
-                zeroBytes
-            );
-        }
-
         forgeJobs[forgeJobId].forgeJobState = State.Cancelled;
 
-        emit CancelForgeJob(
-            forgeJob.operativeAddress,
-            forgeJobId,
-            forgeJob.inputLootAmounts,
-            toMintLootAmount
-        );
+        emit CancelForgeJob(forgeJob.operativeAddress, forgeJobId);
     }
 
     /**
@@ -367,23 +319,6 @@ contract DEFYForge is Pausable, AccessControl {
     }
 
     /**
-     * @dev Returns the remaining time in seconds for an operatives forge job.
-     *      Or Returns 0 if job is ready to complete.
-     * @return remaining time for a forge job id.
-     */
-    function getRemainingTimeForForgeJob(uint256 forgeJobId)
-        public
-        view
-        returns (uint256)
-    {
-        if (forgeJobs[forgeJobId].endTime > timeNow()) {
-            return forgeJobs[forgeJobId].endTime - timeNow();
-        } else {
-            return 0;
-        }
-    }
-
-    /**
      * @dev Approves an IDEFYLoot contract address for forging.
      */
     function approveLootContract(IDEFYLoot iDEFYLoot)
@@ -401,13 +336,5 @@ contract DEFYForge is Pausable, AccessControl {
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
         validLootContracts[iDEFYLoot] = false;
-    }
-
-    /**
-     * @dev Returns the block.timestamp.
-     * @return the current block timestamp
-     */
-    function timeNow() public view returns (uint256) {
-        return block.timestamp;
     }
 }

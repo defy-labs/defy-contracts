@@ -99,8 +99,7 @@ describe("DEFYForge", function () {
                 DEFAULT_ADDRESS,
                 [1],
                 [1],
-                1,
-                [2],
+                2,
                 3
             )).to.be.revertedWith('DEFYForge: Loot contract not valid');
         });
@@ -111,8 +110,7 @@ describe("DEFYForge", function () {
                 DEFAULT_ADDRESS,
                 [1],
                 [1],
-                1,
-                [2],
+                2,
                 3
             )).to.be.revertedWith('AccessControl: account ');
         });
@@ -125,8 +123,7 @@ describe("DEFYForge", function () {
                 DEFAULT_ADDRESS,
                 [1, 2],
                 [1],
-                1,
-                [2],
+                2,
                 3
             )).to.be.revertedWith('DEFYForge: All arrays must be the same length');
         });
@@ -139,8 +136,7 @@ describe("DEFYForge", function () {
                 DEFAULT_ADDRESS,
                 [],
                 [],
-                1,
-                [2],
+                2,
                 3
             )).to.be.revertedWith('DEFYForge: Invalid input loots');
         });
@@ -153,8 +149,7 @@ describe("DEFYForge", function () {
                 DEFAULT_ADDRESS,
                 [1],
                 [1],
-                1,
-                [2],
+                2,
                 3
             )).to.be.revertedWith('DEFYForge: Operative does not have suffient loots');
         });
@@ -174,8 +169,7 @@ describe("DEFYForge", function () {
                 SECONDARY_ADDRESS,
                 [1],
                 [1],
-                10,
-                [2],
+                2,
                 3
             );
 
@@ -197,8 +191,7 @@ describe("DEFYForge", function () {
                 SECONDARY_ADDRESS,
                 [1],
                 [1],
-                10,
-                [2],
+                2,
                 3
             );
 
@@ -222,8 +215,7 @@ describe("DEFYForge", function () {
                 SECONDARY_ADDRESS,
                 [1],
                 [1],
-                10,
-                [2],
+                2,
                 3
             );
 
@@ -247,67 +239,11 @@ describe("DEFYForge", function () {
                 SECONDARY_ADDRESS,
                 [1],
                 [1],
-                10,
-                [2],
+                2,
                 3
             );
 
             await expect(defyForge.completeForgeJob(2)).to.be.revertedWith('DEFYForge: ForgeJobId out of bounds');
-        });
-
-        it("Should fail when insufficient duration has passed", async function () {
-            it("Should fail when a wrong forgeJobId is passed to be completed", async function () {
-                await defyForge['grantRole(bytes32,address)'](FORGER_ROLE, DEFAULT_ADDRESS);
-                await defyForge.approveLootContract(defyLoot.address);
-
-                await defyLoot['grantRole(bytes32,address)'](MINTER_ROLE, defyForge.address);
-                await defyLoot['grantRole(bytes32,address)'](MINTER_ROLE, DEFAULT_ADDRESS);
-                await defyLoot['grantRole(bytes32,address)'](LOOT_BURNER_ROLE, defyForge.address);
-
-                await defyLoot.mintBatch(SECONDARY_ADDRESS, [1, 2], [2, 3], 0x00);
-
-                await defyForge.createForgeJob(
-                    defyLoot.address,
-                    SECONDARY_ADDRESS,
-                    [1],
-                    [1],
-                    100,
-                    [2],
-                    3
-                );
-
-                await expect(defyForge.completeForgeJob(0)).to.be.revertedWith('DEFYForge: ForgeJob is not ready to complete');
-            });
-        });
-
-        it("Should mint tokens back to owner for a cancelled job", async function () {
-            await defyForge['grantRole(bytes32,address)'](FORGER_ROLE, DEFAULT_ADDRESS);
-            await defyForge.approveLootContract(defyLoot.address);
-
-            await defyLoot['grantRole(bytes32,address)'](MINTER_ROLE, defyForge.address);
-            await defyLoot['grantRole(bytes32,address)'](MINTER_ROLE, DEFAULT_ADDRESS);
-            await defyLoot['grantRole(bytes32,address)'](LOOT_BURNER_ROLE, defyForge.address);
-
-            await defyLoot.mintBatch(SECONDARY_ADDRESS, [1, 2], [2, 3], 0x00);
-            expect(await defyLoot.balanceOf(SECONDARY_ADDRESS, 1)).to.equal(2);
-
-            await defyForge.createForgeJob(
-                defyLoot.address,
-                SECONDARY_ADDRESS,
-                [1],
-                [2],
-                1000,
-                [2],
-                3
-            );
-
-            await helpers.time.increase(100);
-
-            expect(await defyLoot.balanceOf(SECONDARY_ADDRESS, 1)).to.equal(0);
-
-            await defyForge.cancelForgeJob(0);
-
-            expect(await defyLoot.balanceOf(SECONDARY_ADDRESS, 1)).to.equal(1);
         });
 
         it("Should mint output token for a completed job", async function () {
@@ -326,8 +262,7 @@ describe("DEFYForge", function () {
                 SECONDARY_ADDRESS,
                 [1],
                 [2],
-                1,
-                [2],
+                2,
                 3
             );
 
