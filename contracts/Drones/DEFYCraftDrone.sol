@@ -20,6 +20,7 @@ contract DEFYCraftDrone is Pausable, AccessControl {
         address operativeAddress;
         uint256[] inputLootIds;
         uint256[] inputLootAmounts;
+        uint256 craftJobId;
     }
 
     // Mapping from craftJobIds to CraftJob struct
