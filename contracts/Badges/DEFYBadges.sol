@@ -11,9 +11,9 @@ contract DEFYBadges is ERC1155, AccessControl, Pausable, Ownable {
     bytes32 public constant URI_SETTER_ROLE = keccak256("URI_SETTER_ROLE");
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
-	bytes32 public constant DECAL_BURNER_ROLE = keccak256("DECAL_BURNER_ROLE");
+    bytes32 public constant DECAL_BURNER_ROLE = keccak256("DECAL_BURNER_ROLE");
 
-	mapping(uint256 => bool) private _tokenTradingEnabled;
+    mapping(uint256 => bool) private _tokenTradingEnabled;
 
     constructor() ERC1155("") {
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
@@ -21,10 +21,7 @@ contract DEFYBadges is ERC1155, AccessControl, Pausable, Ownable {
         _grantRole(PAUSER_ROLE, msg.sender);
     }
 
-    function setURI(string memory newuri) 
-		public
-		onlyRole(URI_SETTER_ROLE)
-	{
+    function setURI(string memory newuri) public onlyRole(URI_SETTER_ROLE) {
         _setURI(newuri);
     }
 
@@ -36,55 +33,64 @@ contract DEFYBadges is ERC1155, AccessControl, Pausable, Ownable {
         _unpause();
     }
 
-    function mint(address account, uint256 id, uint256 amount, bytes memory data)
-        public
-        onlyRole(MINTER_ROLE)
-    {
+    function mint(
+        address account,
+        uint256 id,
+        uint256 amount,
+        bytes memory data
+    ) public onlyRole(MINTER_ROLE) {
         _mint(account, id, amount, data);
     }
 
-    function mintBatch(address to, uint256[] memory ids, uint256[] memory amounts, bytes memory data)
-        public
-        onlyRole(MINTER_ROLE)
-    {
+    function mintBatch(
+        address to,
+        uint256[] memory ids,
+        uint256[] memory amounts,
+        bytes memory data
+    ) public onlyRole(MINTER_ROLE) {
         _mintBatch(to, ids, amounts, data);
     }
 
-	function burnToken(address owner, uint256 id, uint256 amount)
-		public
-		onlyRole(DECAL_BURNER_ROLE)
-	{
-		_burn(owner, id, amount);
-	}
+    function burnToken(
+        address owner,
+        uint256 id,
+        uint256 amount
+    ) public onlyRole(DECAL_BURNER_ROLE) {
+        _burn(owner, id, amount);
+    }
 
+    function setTokenTradingEnabledForToken(
+        uint256 tokenId,
+        bool enabled
+    ) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        _tokenTradingEnabled[tokenId] = enabled;
+    }
 
-	function setTokenTradingEnabledForToken(uint256 tokenId, bool enabled)
-		external
-		onlyRole(DEFAULT_ADMIN_ROLE)
-	{
-		_tokenTradingEnabled[tokenId] = enabled;
-	}
+    function _beforeTokenTransfer(
+        address operator,
+        address from,
+        address to,
+        uint256[] memory ids,
+        uint256[] memory amounts,
+        bytes memory data
+    ) internal override whenNotPaused {
+        for (uint256 i = 0; i < ids.length; i++) {
+            require(
+                _tokenTradingEnabled[ids[i]] ||
+                    from == address(0) ||
+                    to == address(0),
+                "DEFYBadges: Token trading has not been enabled this token"
+            );
+        }
 
-    function _beforeTokenTransfer(address operator, address from, address to, uint256[] memory ids, uint256[] memory amounts, bytes memory data)
-        internal
-        whenNotPaused
-        override
-    {
-		for (uint256 i = 0; i < ids.length; i++) {
-			require(_tokenTradingEnabled[ids[i]] || from == address(0) || to == address(0), "DEFYBadges: Token trading has not been enabled this token");
-		}
-
-		super._beforeTokenTransfer(operator, from, to, ids, amounts, data);
+        super._beforeTokenTransfer(operator, from, to, ids, amounts, data);
     }
 
     // The following functions are overrides required by Solidity.
 
-    function supportsInterface(bytes4 interfaceId)
-        public
-        view
-        override(ERC1155, AccessControl)
-        returns (bool)
-    {
+    function supportsInterface(
+        bytes4 interfaceId
+    ) public view override(ERC1155, AccessControl) returns (bool) {
         return super.supportsInterface(interfaceId);
     }
 }

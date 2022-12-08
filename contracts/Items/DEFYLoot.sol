@@ -1,14 +1,15 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.4;
+pragma solidity ^0.8.13;
 
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
+import "operator-filter-registry/src/DefaultOperatorFilterer.sol";
 import "./IDEFYLoot.sol";
 
 /// @custom:security-contact michael@defylabs.xyz
-contract DEFYLoot is IDEFYLoot, ERC1155, AccessControl, Pausable, Ownable {
+contract DEFYLoot is IDEFYLoot, ERC1155, AccessControl, Pausable, Ownable, DefaultOperatorFilterer {
     bytes32 public constant URI_SETTER_ROLE = keccak256("URI_SETTER_ROLE");
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
@@ -107,6 +108,32 @@ contract DEFYLoot is IDEFYLoot, ERC1155, AccessControl, Pausable, Ownable {
         }
 
         super._beforeTokenTransfer(operator, from, to, ids, amounts, data);
+    }
+
+    function setApprovalForAll(address operator, bool approved) 
+        public 
+        override(ERC1155, IERC1155) 
+        onlyAllowedOperatorApproval(operator)
+    {
+        super.setApprovalForAll(operator, approved);
+    }
+
+    function safeTransferFrom(address from, address to, uint256 tokenId, uint256 amount, bytes memory data)
+        public
+        override(ERC1155, IERC1155)
+        onlyAllowedOperator(from)
+    {
+        super.safeTransferFrom(from, to, tokenId, amount, data);
+    }
+
+    function safeBatchTransferFrom(
+        address from,
+        address to,
+        uint256[] memory ids,
+        uint256[] memory amounts,
+        bytes memory data
+    ) public virtual override(ERC1155, IERC1155) onlyAllowedOperator(from) {
+        super.safeBatchTransferFrom(from, to, ids, amounts, data);
     }
 
     // The following functions are overrides required by Solidity.
