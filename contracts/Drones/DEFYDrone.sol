@@ -24,6 +24,30 @@ contract DEFYDrone is
 
     mapping(uint256 => bool) private _tokenTradingDisabled;
 
+    // Base URI for drone token uris
+    string private _droneBaseURI;
+
+    /// @notice Sets the base URI used for the tokens.
+    function setBaseURI(string memory uri) public onlyRole(DEFAULT_ADMIN_ROLE) {
+        _droneBaseURI = uri;
+    }
+
+    /// @notice Get the TokenURI for the supplied token, in the form {baseURI}{tokenId}
+    function tokenURI(
+        uint256 tokenId
+    ) public view override returns (string memory) {
+        require(_exists(tokenId), "DEFYDrone: URI query for nonexistent token");
+
+        return
+            string(
+                abi.encodePacked(
+                    _droneBaseURI,
+                    Strings.toString(tokenId),
+                    ".json"
+                )
+            );
+    }
+
     constructor() ERC721("DEFYDrone", "DD") {
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(PAUSER_ROLE, msg.sender);
