@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.4;
+pragma solidity ^0.8.13;
 
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -110,13 +110,17 @@ contract DEFYLoot is IDEFYLoot, ERC1155, AccessControl, Pausable, Ownable, Defau
         super._beforeTokenTransfer(operator, from, to, ids, amounts, data);
     }
 
-    function setApprovalForAll(address operator, bool approved) public override onlyAllowedOperatorApproval(operator) {
+    function setApprovalForAll(address operator, bool approved) 
+        public 
+        override(ERC1155, IERC1155) 
+        onlyAllowedOperatorApproval(operator)
+    {
         super.setApprovalForAll(operator, approved);
     }
 
     function safeTransferFrom(address from, address to, uint256 tokenId, uint256 amount, bytes memory data)
         public
-        override
+        override(ERC1155, IERC1155)
         onlyAllowedOperator(from)
     {
         super.safeTransferFrom(from, to, tokenId, amount, data);
@@ -128,7 +132,7 @@ contract DEFYLoot is IDEFYLoot, ERC1155, AccessControl, Pausable, Ownable, Defau
         uint256[] memory ids,
         uint256[] memory amounts,
         bytes memory data
-    ) public virtual override onlyAllowedOperator(from) {
+    ) public virtual override(ERC1155, IERC1155) onlyAllowedOperator(from) {
         super.safeBatchTransferFrom(from, to, ids, amounts, data);
     }
 

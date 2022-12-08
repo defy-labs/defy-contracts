@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.9;
+pragma solidity ^0.8.13;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
@@ -9,7 +9,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "operator-filter-registry/src/DefaultOperatorFilterer.sol";
 
-contract DEFYDrone is ERC721, ERC721Enumerable, Pausable, Ownable, AccessControl, DefaultOperatorFilterer {
+contract DEFYDrone is ERC721Enumerable, Pausable, Ownable, AccessControl, DefaultOperatorFilterer {
     using Counters for Counters.Counter;
 
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
@@ -41,35 +41,37 @@ contract DEFYDrone is ERC721, ERC721Enumerable, Pausable, Ownable, AccessControl
         return tokenId;
     }
 
-    function setApprovalForAll(address operator, bool approved) public override onlyAllowedOperatorApproval(operator) {
+    function setApprovalForAll(address operator, bool approved) public override(ERC721, IERC721) onlyAllowedOperatorApproval(operator) {
         super.setApprovalForAll(operator, approved);
     }
 
-    function approve(address operator, uint256 tokenId) public override onlyAllowedOperatorApproval(operator) {
+    function approve(address operator, uint256 tokenId) public override(ERC721, IERC721) onlyAllowedOperatorApproval(operator) {
         super.approve(operator, tokenId);
     }
 
-    function transferFrom(address from, address to, uint256 tokenId) public override onlyAllowedOperator(from) {
+    function transferFrom(address from, address to, uint256 tokenId) public override(ERC721, IERC721) onlyAllowedOperator(from) {
         super.transferFrom(from, to, tokenId);
     }
 
-    function safeTransferFrom(address from, address to, uint256 tokenId) public override onlyAllowedOperator(from) {
+    function safeTransferFrom(address from, address to, uint256 tokenId) public override(ERC721, IERC721) onlyAllowedOperator(from) {
         super.safeTransferFrom(from, to, tokenId);
     }
 
     function safeTransferFrom(address from, address to, uint256 tokenId, bytes memory data)
         public
-        override
+        override(ERC721, IERC721)
         onlyAllowedOperator(from)
     {
         super.safeTransferFrom(from, to, tokenId, data);
     }
+
+
     // The following functions are overrides required by Solidity.
 
     function supportsInterface(bytes4 interfaceId)
         public
         view
-        override(ERC721, ERC721Enumerable, AccessControl)
+        override(ERC721Enumerable, AccessControl)
         returns (bool)
     {
         return super.supportsInterface(interfaceId);
