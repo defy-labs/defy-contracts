@@ -22,6 +22,8 @@ contract DEFYDrone is
     bytes32 public constant DRONE_MINTER_ROLE = keccak256("DRONE_MINTER_ROLE");
     Counters.Counter private _tokenIdCounter;
 
+    mapping(uint256 => bool) private _tokenTradingDisabled;
+
     constructor() ERC721("DEFYDrone", "DD") {
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(PAUSER_ROLE, msg.sender);
@@ -43,6 +45,27 @@ contract DEFYDrone is
         _tokenIdCounter.increment();
         _safeMint(to, tokenId);
         return tokenId;
+    }
+
+    function setTokenTradingEnabledForToken(
+        uint256 tokenId,
+        bool disabled
+    ) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        _tokenTradingDisabled[tokenId] = disabled;
+    }
+
+    // Prevent token transferring when contract is paused
+    function _beforeTokenTransfer(
+        address from,
+        address to,
+        uint256 tokenId
+    ) internal override whenNotPaused {
+        require(
+            !_tokenTradingDisabled[tokenId],
+            "DEFYDrone: Token trading has been disabled for this token"
+        );
+
+        super._beforeTokenTransfer(from, to, tokenId);
     }
 
     function setApprovalForAll(
