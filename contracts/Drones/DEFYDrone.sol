@@ -33,9 +33,12 @@ contract DEFYDrone is
     }
 
     /// @notice Get the TokenURI for the supplied token, in the form {baseURI}{tokenId}
-    function tokenURI(
-        uint256 tokenId
-    ) public view override returns (string memory) {
+    function tokenURI(uint256 tokenId)
+        public
+        view
+        override
+        returns (string memory)
+    {
         require(_exists(tokenId), "DEFYDrone: URI query for nonexistent token");
 
         return
@@ -62,19 +65,21 @@ contract DEFYDrone is
         _unpause();
     }
 
-    function safeMint(
-        address to
-    ) public onlyRole(DRONE_MINTER_ROLE) returns (uint256) {
+    function safeMint(address to)
+        public
+        onlyRole(DRONE_MINTER_ROLE)
+        returns (uint256)
+    {
         uint256 tokenId = _tokenIdCounter.current();
         _tokenIdCounter.increment();
         _safeMint(to, tokenId);
         return tokenId;
     }
 
-    function setTokenTradingEnabledForToken(
-        uint256 tokenId,
-        bool disabled
-    ) external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function setTokenTradingEnabledForToken(uint256 tokenId, bool disabled)
+        external
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
         _tokenTradingDisabled[tokenId] = disabled;
     }
 
@@ -92,17 +97,19 @@ contract DEFYDrone is
         super._beforeTokenTransfer(from, to, tokenId);
     }
 
-    function setApprovalForAll(
-        address operator,
-        bool approved
-    ) public override(ERC721, IERC721) onlyAllowedOperatorApproval(operator) {
+    function setApprovalForAll(address operator, bool approved)
+        public
+        override(ERC721, IERC721)
+        onlyAllowedOperatorApproval(operator)
+    {
         super.setApprovalForAll(operator, approved);
     }
 
-    function approve(
-        address operator,
-        uint256 tokenId
-    ) public override(ERC721, IERC721) onlyAllowedOperatorApproval(operator) {
+    function approve(address operator, uint256 tokenId)
+        public
+        override(ERC721, IERC721)
+        onlyAllowedOperatorApproval(operator)
+    {
         super.approve(operator, tokenId);
     }
 
@@ -133,9 +140,12 @@ contract DEFYDrone is
 
     // The following functions are overrides required by Solidity.
 
-    function supportsInterface(
-        bytes4 interfaceId
-    ) public view override(ERC721Enumerable, AccessControl) returns (bool) {
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        override(ERC721Enumerable, AccessControl)
+        returns (bool)
+    {
         return super.supportsInterface(interfaceId);
     }
 }
