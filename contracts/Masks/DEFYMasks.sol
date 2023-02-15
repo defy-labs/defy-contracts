@@ -9,6 +9,15 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "operator-filter-registry/src/DefaultOperatorFilterer.sol";
 
+// ______ _____________   __
+// |  _  \  ___|  ___\ \ / /
+// | | | | |__ | |_   \ V /
+// | | | |  __||  _|   \ /
+// | |/ /| |___| |     | |
+// |___/ \____/\_|     \_/
+//
+// WELCOME TO THE REVOLUTION
+
 contract DEFYMasks is
     ERC721,
     ERC721Enumerable,
