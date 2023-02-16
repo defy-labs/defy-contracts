@@ -67,8 +67,6 @@ contract DEFYMasks is
     constructor() ERC721("DEFYMasks", "DM") {
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(PAUSER_ROLE, msg.sender);
-        _grantRole(MINTER_ROLE, msg.sender);
-        _grantRole(BURNER_ROLE, msg.sender);
     }
 
     function safeMint(address to) public onlyRole(MINTER_ROLE) {
@@ -99,15 +97,18 @@ contract DEFYMasks is
     // Checks for token transfers and burns that either:
     //  Admin enabled trading for operative address; or,
     //  Operative Address will have at least 1 mask after transfer
+    // If check to allow minting to bypass check
     function _beforeTokenTransfer(
         address from,
         address to,
         uint256 tokenId
     ) internal override(ERC721, ERC721Enumerable) whenNotPaused {
-        require(
-            _tokenTradingEnabled[from] || balanceOf(from) >= 2,
-            "DEFYMasks: Token trading is not enabled"
-        );
+        if (tokenId < totalSupply()) {
+            require(
+                _tokenTradingEnabled[from] || balanceOf(from) >= 2,
+                "DEFYMasks: Token trading is not enabled"
+            );
+        }
 
         super._beforeTokenTransfer(from, to, tokenId);
     }
