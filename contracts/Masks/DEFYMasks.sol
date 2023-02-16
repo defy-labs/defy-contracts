@@ -40,6 +40,11 @@ contract DEFYMasks is
     // Base URI for mask token uris
     string private _maskBaseURI;
 
+    constructor() ERC721("DEFYMasks", "DM") {
+        _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _grantRole(PAUSER_ROLE, msg.sender);
+    }
+
     /// @notice Sets the base URI used for the tokens.
     function setBaseURI(string memory uri) public onlyRole(DEFAULT_ADMIN_ROLE) {
         _maskBaseURI = uri;
@@ -62,11 +67,6 @@ contract DEFYMasks is
                     ".json"
                 )
             );
-    }
-
-    constructor() ERC721("DEFYMasks", "DM") {
-        _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
-        _grantRole(PAUSER_ROLE, msg.sender);
     }
 
     function safeMint(address to) public onlyRole(MINTER_ROLE) {
@@ -103,14 +103,23 @@ contract DEFYMasks is
         address to,
         uint256 tokenId
     ) internal override(ERC721, ERC721Enumerable) whenNotPaused {
-        if (tokenId < totalSupply()) {
+        if (from != address(0)) {
             require(
                 _tokenTradingEnabled[from] || balanceOf(from) >= 2,
                 "DEFYMasks: Token trading is not enabled"
             );
         }
-
         super._beforeTokenTransfer(from, to, tokenId);
+    }
+
+    // Disables token trading after transfer event
+    function _afterTokenTransfer(
+        address from,
+        address to,
+        uint256 tokenId
+    ) internal override(ERC721) whenNotPaused {
+        _tokenTradingEnabled[from] = false;
+        super._afterTokenTransfer(from, to, tokenId);
     }
 
     function setTokenTradingEnabledForToken(
