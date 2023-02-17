@@ -76,6 +76,8 @@ contract DEFYMasks is
     }
 
     function safeBatchMint(address[] calldata to) public onlyRole(MINTER_ROLE) {
+        require(to.length <= 80, "DEFYMasks: mint batch max count is 80");
+
         for (uint256 i = 0; i < to.length; i++) {
             safeMint(to[i]);
         }
@@ -89,6 +91,7 @@ contract DEFYMasks is
         public
         onlyRole(BURNER_ROLE)
     {
+        require(tokenIds.length <= 80, "DEFYMasks: mint batch max count is 80");
         for (uint256 i = 0; i < tokenIds.length; i++) {
             _burn(tokenIds[i]);
         }

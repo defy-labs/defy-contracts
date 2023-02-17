@@ -117,5 +117,19 @@ describe("DEFYMasks", function () {
             expect(await defyMasks.ownerOf(0)).to.be.equal(SECONDARY_ADDRESS);
         });
 
+        it("Should fail transfers with 1 mask after an owner has transferred already", async function () {
+            await defyMasks['grantRole(bytes32,address)'](MINTER_ROLE, DEFAULT_ADDRESS);
+            await defyMasks['grantRole(bytes32,address)'](BURNER_ROLE, DEFAULT_ADDRESS);
+            await defyMasks.safeMint(DEFAULT_ADDRESS);
+            await defyMasks.setTokenTradingEnabledForToken(DEFAULT_ADDRESS, true);
+            await defyMasks.transferFrom(DEFAULT_ADDRESS, SECONDARY_ADDRESS, 0);
+            expect(await defyMasks.balanceOf(SECONDARY_ADDRESS)).to.equal(1);
+            expect(await defyMasks.ownerOf(0)).to.be.equal(SECONDARY_ADDRESS);
+            await defyMasks.safeMint(DEFAULT_ADDRESS);
+            expect(await defyMasks.ownerOf(1)).to.be.equal(DEFAULT_ADDRESS);
+            await expect(defyMasks.transferFrom(DEFAULT_ADDRESS, SECONDARY_ADDRESS, 1)).to.revertedWith(
+                "DEFYMasks: Token trading is not enabled");
+        });
+
     });
 });
