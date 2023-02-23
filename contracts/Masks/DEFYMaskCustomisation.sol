@@ -118,7 +118,7 @@ contract DEFYMaskCustomisation is
         }
     }
 
-    function setTokenTradingEnabledForToken(uint256 tokenId, bool disabled)
+    function setTokenTradingDisabledForToken(uint256 tokenId, bool disabled)
         external
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
