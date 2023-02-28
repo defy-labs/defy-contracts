@@ -6,6 +6,16 @@ import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
+// ______ _____________   __
+// |  _  \  ___|  ___\ \ / /
+// | | | | |__ | |_   \ V /
+// | | | |  __||  _|   \ /
+// | |/ /| |___| |     | |
+// |___/ \____/\_|     \_/
+//
+// WELCOME TO THE REVOLUTION
+
+/// @custom:security-contact michael@defylabs.xyz
 contract DEFYApplyMaskCustomItems is Pausable, AccessControl {
     bytes32 public constant CUSTOMISE_MASK_ROLE =
         keccak256("CUSTOMISE_MASK_ROLE");
