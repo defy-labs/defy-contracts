@@ -20,12 +20,6 @@ contract DEFYApplyMaskCustomItems is Pausable, AccessControl {
     bytes32 public constant CUSTOMISE_MASK_ROLE =
         keccak256("CUSTOMISE_MASK_ROLE");
 
-    struct CustomiseMaskJob {
-        IDEFYLoot lootContract;
-        address operativeAddress;
-        uint256[] inputLootIds;
-    }
-
     // Mapping from IDEFYLoot to validity contract condition
     mapping(IDEFYLoot => bool) private validLootContracts;
 
