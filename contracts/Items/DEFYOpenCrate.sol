@@ -15,18 +15,18 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 // WELCOME TO THE REVOLUTION
 
 /// @custom:security-contact michael@defylabs.xyz
-contract DEFYOpenGacha is Pausable, AccessControl {
+contract DEFYOpenCrate is Pausable, AccessControl {
     bytes32 public constant OPENER_ROLE = keccak256("OPENER_ROLE");
 
     // Mapping from IDEFYLoot to validity contract condition
     mapping(IDEFYLoot => bool) private validLootContracts;
 
     // Event indexed by operative address
-    event OpenGacha(
+    event OpenCrate(
         address indexed operativeAddress,
         uint256[] outputLootIds,
         uint256[] outputLootAmounts,
-        uint256 inputGachaItem
+        uint256 inputCrateItem
     );
 
     constructor() {
@@ -34,44 +34,44 @@ contract DEFYOpenGacha is Pausable, AccessControl {
     }
 
     /**
-     * @dev Burns the input gacha item
+     * @dev Burns the input crate item
      *      Mints the output loot items
      */
-    function openGacha(
+    function openCrate(
         IDEFYLoot lootContract,
         address operativeAddress,
         uint256[] calldata outputLootIds,
         uint256[] calldata outputLootAmounts,
-        uint256 inputGachaItem
+        uint256 inputCrateItem
     ) public onlyRole(OPENER_ROLE) {
         // require call is made to a valid loot contract
         require(
             validLootContracts[lootContract] == true,
-            "DEFYOpenGacha: Loot contract not valid"
+            "DEFYOpenCrate: Loot contract not valid"
         );
 
         // require input and outputs are not null
         require(
             outputLootAmounts.length != 0 &&
                 outputLootIds.length != 0 &&
-                inputGachaItem != 0,
-            "DEFYOpenGacha: Invalid input loots"
+                inputCrateItem != 0,
+            "DEFYOpenCrate: Invalid input loots"
         );
 
         // require input loots ids and amount are the same
         require(
             outputLootAmounts.length == outputLootIds.length,
-            "DEFYOpenGacha: All arrays must be the same length"
+            "DEFYOpenCrate: All arrays must be the same length"
         );
 
-        // require operative own has Gacha token available
+        // require operative own has Crate token available
         require(
-            lootContract.balanceOf(operativeAddress, inputGachaItem) >= 1,
-            "DEFYOpenGacha: Operative does not own Gacha item"
+            lootContract.balanceOf(operativeAddress, inputCrateItem) >= 1,
+            "DEFYOpenCrate: Operative does not own Crate item"
         );
 
-        // burn gacha input item
-        lootContract.burnToken(operativeAddress, inputGachaItem, 1);
+        // burn crate input item
+        lootContract.burnToken(operativeAddress, inputCrateItem, 1);
 
         bytes memory zeroBytes;
 
@@ -83,11 +83,11 @@ contract DEFYOpenGacha is Pausable, AccessControl {
             zeroBytes
         );
 
-        emit OpenGacha(
+        emit OpenCrate(
             operativeAddress,
             outputLootIds,
             outputLootAmounts,
-            inputGachaItem
+            inputCrateItem
         );
     }
 
@@ -95,31 +95,27 @@ contract DEFYOpenGacha is Pausable, AccessControl {
      * @dev Returns the validity of the an lootContract address.
      * @return the boolean of validity.
      */
-    function getLootContractValidity(IDEFYLoot lootContract)
-        public
-        view
-        returns (bool)
-    {
+    function getLootContractValidity(
+        IDEFYLoot lootContract
+    ) public view returns (bool) {
         return validLootContracts[lootContract];
     }
 
     /**
      * @dev Approves an IDEFYLoot contract address for forging.
      */
-    function approveLootContract(IDEFYLoot iDEFYLoot)
-        public
-        onlyRole(DEFAULT_ADMIN_ROLE)
-    {
+    function approveLootContract(
+        IDEFYLoot iDEFYLoot
+    ) public onlyRole(DEFAULT_ADMIN_ROLE) {
         validLootContracts[iDEFYLoot] = true;
     }
 
     /**
      * @dev Revokes an IDEFYLoot contract address for forging.
      */
-    function revokeLootContract(IDEFYLoot iDEFYLoot)
-        public
-        onlyRole(DEFAULT_ADMIN_ROLE)
-    {
+    function revokeLootContract(
+        IDEFYLoot iDEFYLoot
+    ) public onlyRole(DEFAULT_ADMIN_ROLE) {
         validLootContracts[iDEFYLoot] = false;
     }
 }

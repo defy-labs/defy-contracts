@@ -2,30 +2,30 @@ const { expect } = require("chai");
 const { ethers } = require("hardhat");
 const helpers = require("@nomicfoundation/hardhat-network-helpers");
 
-let DEFYOpenGacha;
-let defyOpenGacha;
+let DEFYOpenCrate;
+let defyOpenCrate;
 
 let DEFYLoot;
 let defyLoot;
 
 let DEFAULT_ADMIN_ROLE, MINTER_ROLE, LOOT_BURNER_ROLE, PAUSER_ROLE, OPENER_ROLE;
 
-describe("DEFYApplyMaskCustomItems", function () {
+describe("DEFYOpenCrate", function () {
 
     beforeEach(async function () {
         DEFYLoot = await ethers.getContractFactory("DEFYLoot");
         defyLoot = await DEFYLoot.deploy();
         await defyLoot.deployed();
 
-        DEFYOpenGacha = await ethers.getContractFactory("DEFYOpenGacha");
-        defyOpenGacha = await DEFYOpenGacha.deploy();
-        await defyOpenGacha.deployed();
+        DEFYOpenCrate = await ethers.getContractFactory("DEFYOpenCrate");
+        defyOpenCrate = await DEFYOpenCrate.deploy();
+        await defyOpenCrate.deployed();
 
         DEFAULT_ADMIN_ROLE = await defyLoot['DEFAULT_ADMIN_ROLE()']();
         PAUSER_ROLE = await defyLoot['PAUSER_ROLE()']();
         MINTER_ROLE = await defyLoot['MINTER_ROLE()']();
         LOOT_BURNER_ROLE = await defyLoot['LOOT_BURNER_ROLE()']();
-        OPENER_ROLE = await defyOpenGacha['OPENER_ROLE()']();
+        OPENER_ROLE = await defyOpenCrate['OPENER_ROLE()']();
 
         const [owner, secondaryAddress] = await ethers.getSigners();
         DEFAULT_ADDRESS = owner.address;
@@ -36,20 +36,20 @@ describe("DEFYApplyMaskCustomItems", function () {
 
     });
 
-    describe('DEFYOpenGacha', () => {
-        it("Should fail to open gacha if the loot contract is not approved", async function () {
-            await defyOpenGacha['grantRole(bytes32,address)'](OPENER_ROLE, DEFAULT_ADDRESS);
-            await expect(defyOpenGacha.openGacha(
+    describe('DEFYOpenCrate', () => {
+        it("Should fail to open crate if the loot contract is not approved", async function () {
+            await defyOpenCrate['grantRole(bytes32,address)'](OPENER_ROLE, DEFAULT_ADDRESS);
+            await expect(defyOpenCrate.openCrate(
                 defyLoot.address,
                 DEFAULT_ADDRESS,
                 [1],
                 [1],
                 10
-            )).to.be.revertedWith("DEFYOpenGacha: Loot contract not valid");
+            )).to.be.revertedWith("DEFYOpenCrate: Loot contract not valid");
         });
 
         it("Should fail if caller is not an opener", async function () {
-            await expect(defyOpenGacha.openGacha(
+            await expect(defyOpenCrate.openCrate(
                 defyLoot.address,
                 DEFAULT_ADDRESS,
                 [1],
@@ -58,41 +58,41 @@ describe("DEFYApplyMaskCustomItems", function () {
             )).to.be.revertedWith('AccessControl: account ');
         });
 
-        it("Should fail a open gacha if inputs are not valid", async function () {
-            await defyOpenGacha['grantRole(bytes32,address)'](OPENER_ROLE, DEFAULT_ADDRESS);
-            await defyOpenGacha.approveLootContract(defyLoot.address);
-            await expect(defyOpenGacha.openGacha(
+        it("Should fail a open crate if inputs are not valid", async function () {
+            await defyOpenCrate['grantRole(bytes32,address)'](OPENER_ROLE, DEFAULT_ADDRESS);
+            await defyOpenCrate.approveLootContract(defyLoot.address);
+            await expect(defyOpenCrate.openCrate(
                 defyLoot.address,
                 DEFAULT_ADDRESS,
                 [],
                 [1],
                 10
-            )).to.be.revertedWith("DEFYOpenGacha: Invalid input loots");
+            )).to.be.revertedWith("DEFYOpenCrate: Invalid input loots");
         });
 
         it("Should fail if operative does not own input loots", async function () {
-            await defyOpenGacha['grantRole(bytes32,address)'](OPENER_ROLE, DEFAULT_ADDRESS);
-            await defyOpenGacha.approveLootContract(defyLoot.address);
-            await expect(defyOpenGacha.openGacha(
+            await defyOpenCrate['grantRole(bytes32,address)'](OPENER_ROLE, DEFAULT_ADDRESS);
+            await defyOpenCrate.approveLootContract(defyLoot.address);
+            await expect(defyOpenCrate.openCrate(
                 defyLoot.address,
                 DEFAULT_ADDRESS,
                 [1],
                 [1],
                 10
-            )).to.be.revertedWith("DEFYOpenGacha: Operative does not own Gacha item");
+            )).to.be.revertedWith("DEFYOpenCrate: Operative does not own Crate item");
         });
 
-        it("Should successfully burn input tokens when opening gacha", async function () {
-            await defyOpenGacha['grantRole(bytes32,address)'](OPENER_ROLE, DEFAULT_ADDRESS);
-            await defyOpenGacha.approveLootContract(defyLoot.address);
+        it("Should successfully burn input tokens when opening crate", async function () {
+            await defyOpenCrate['grantRole(bytes32,address)'](OPENER_ROLE, DEFAULT_ADDRESS);
+            await defyOpenCrate.approveLootContract(defyLoot.address);
 
-            await defyLoot['grantRole(bytes32,address)'](LOOT_BURNER_ROLE, defyOpenGacha.address);
-            await defyLoot['grantRole(bytes32,address)'](MINTER_ROLE, defyOpenGacha.address);
+            await defyLoot['grantRole(bytes32,address)'](LOOT_BURNER_ROLE, defyOpenCrate.address);
+            await defyLoot['grantRole(bytes32,address)'](MINTER_ROLE, defyOpenCrate.address);
             await defyLoot['grantRole(bytes32,address)'](MINTER_ROLE, DEFAULT_ADDRESS);
 
             await defyLoot.mintBatch(SECONDARY_ADDRESS, [10], [10], 0x00);
 
-            await defyOpenGacha.openGacha(
+            await defyOpenCrate.openCrate(
                 defyLoot.address,
                 SECONDARY_ADDRESS,
                 [2],

@@ -7,19 +7,19 @@ const hre = require("hardhat");
 const { ethers } = hre;
 
 async function main() {
-    const DEFYOpenGacha = await ethers.getContractFactory("DEFYOpenGacha");
-    const defyOpenGacha = await DEFYOpenGacha.deploy();
+    const DEFYOpenCrate = await ethers.getContractFactory("DEFYOpenCrate");
+    const defyOpenCrate = await DEFYOpenCrate.deploy();
 
-    await defyOpenGacha.deployed();
+    await defyOpenCrate.deployed();
 
-    console.log("defyOpenGacha deployed to:", defyOpenGacha.address);
+    console.log("defyOpenCrate deployed to:", defyOpenCrate.address);
 
     console.log("waiting 30s then verifying...");
     await new Promise(r => setTimeout(r, 30000));
 
     console.log("verifying");
     await hre.run("verify:verify", {
-        address: defyOpenGacha.address,
+        address: defyOpenCrate.address,
     });
 }
 
