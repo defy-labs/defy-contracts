@@ -56,7 +56,7 @@ contract DEFYMaticFaucet is Pausable, AccessControl {
 
     function withdrawAllMatic(
         address payable to
-    ) external payable onlyRole(DEFAULT_ADMIN_ROLE) {
+    ) external payable whenNotPaused onlyRole(DEFAULT_ADMIN_ROLE) {
         uint256 amount = getBalance();
         (bool success, ) = to.call{value: amount}("");
         require(success, "transaction failed");
