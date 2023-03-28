@@ -8,6 +8,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "operator-filter-registry/src/DefaultOperatorFilterer.sol";
+import "./IDEFYMasks.sol";
 
 // ______ _____________   __
 // |  _  \  ___|  ___\ \ / /
@@ -19,6 +20,7 @@ import "operator-filter-registry/src/DefaultOperatorFilterer.sol";
 // WELCOME TO THE REVOLUTION
 
 contract DEFYMasks is
+    IDEFYMasks,
     ERC721,
     ERC721Enumerable,
     Pausable,
@@ -190,7 +192,7 @@ contract DEFYMasks is
     function supportsInterface(bytes4 interfaceId)
         public
         view
-        override(ERC721, ERC721Enumerable, AccessControl)
+        override(ERC721, ERC721Enumerable, AccessControl, IERC165)
         returns (bool)
     {
         return super.supportsInterface(interfaceId);
