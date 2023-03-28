@@ -10,6 +10,8 @@ async function main() {
     const DEFYSwag = await ethers.getContractFactory("DEFYSwag");
     const defySwag = await DEFYSwag.deploy();
 
+		console.log(defySwag)
+
     await defySwag.deployed();
 
     console.log("defySwag deployed to:", defySwag.address);

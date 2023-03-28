@@ -7,6 +7,7 @@ const hre = require("hardhat");
 const { ethers } = hre;
 
 async function main() {
+    console.log('deploying')
     const DEFYMasks = await ethers.getContractFactory("DEFYMasks");
     const defyMasks = await DEFYMasks.deploy();
 
