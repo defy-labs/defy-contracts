@@ -10,7 +10,7 @@ pragma solidity ^0.8.13;
 //
 // WELCOME TO THE REVOLUTION
 
-contract DEFYGameManager {
+contract DEFYAnalytics {
     event DailyCheckIn(address operative);
     event AccountCreation(address operative);
 

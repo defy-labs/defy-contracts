@@ -7,19 +7,19 @@ const hre = require("hardhat");
 const { ethers } = hre;
 
 async function main() {
-    const DEFYGameManager = await ethers.getContractFactory("DEFYGameManager");
-    const defyGameManager = await DEFYGameManager.deploy();
+    const DEFYAnalytics = await ethers.getContractFactory("DEFYAnalytics");
+    const defyAnalytics = await DEFYAnalytics.deploy();
 
-    await defyGameManager.deployed();
+    await defyAnalytics.deployed();
 
-    console.log("defyGameManager deployed to:", defyGameManager.address);
+    console.log("defyAnalytics deployed to:", defyAnalytics.address);
 
     console.log("waiting 30s then verifying...");
     await new Promise(r => setTimeout(r, 30000));
 
     console.log("verifying");
     await hre.run("verify:verify", {
-        address: defyGameManager.address,
+        address: defyAnalytics.address,
     });
 }
 
