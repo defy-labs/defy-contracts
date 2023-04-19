@@ -35,7 +35,7 @@ describe("DEFYBatchBurn", function () {
     });
 
     describe("DEFYBatchBurn", () => {
-        it("Should fail to open crate if the loot contract is not approved", async function () {
+        it("Should fail to batch burn if the loot contract is not approved", async function () {
             await defyBatchBurn["grantRole(bytes32,address)"](
                 LOOT_BURNER_ROLE,
                 DEFAULT_ADDRESS
@@ -113,7 +113,7 @@ describe("DEFYBatchBurn", function () {
             );
         });
 
-        it("Should successfully burn input tokens when opening crate", async function () {
+        it("Should successfully batch burn input tokens", async function () {
             await defyBatchBurn["grantRole(bytes32,address)"](
                 LOOT_BURNER_ROLE,
                 DEFAULT_ADDRESS
