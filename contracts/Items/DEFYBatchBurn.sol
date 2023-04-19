@@ -1,14 +1,10 @@
-// SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.9;
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.13;
 
 import "./IDEFYLoot.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
-import "@openzeppelin/contracts/utils/Counters.sol";
 
 contract DEFYBatchBurn is AccessControl {
-    using Counters for Counters.Counter;
-    Counters.Counter private _forgeJobIds;
-
     bytes32 public constant LOOT_BURNER_ROLE = keccak256("LOOT_BURNER_ROLE");
 
     // Mapping from IDEFYLoot to validity contract condition
