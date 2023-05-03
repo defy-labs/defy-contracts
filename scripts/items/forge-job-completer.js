@@ -13,16 +13,14 @@ async function main() {
     const defyForge = DEFYForge.attach(DEFYForgeContractAddress);
 
     // Check if the contract is deployed
-    console.log(
-        `DEFYForge is deployed at ${DEFYForgeContractAddress}:`,
-        await defyForge.deployed()
-    );
+    console.log(`DEFYForge is deployed at ${DEFYForgeContractAddress}`);
 
     // TODO: MANUALLY NEED TO INPUT FORGEJOB ID FROM ENDING 24 HOURS AGO
     const forgeJobsCount = 9600;
 
     for (var i = 0; i < forgeJobsCount; i++) {
-        const forgeJob = await defyForge.getForgeJob();
+        const forgeJob = await defyForge.getForgeJob(i);
+        console.log(forgeJob);
 
         // checks if forge job is processing
         if (forgeJob.forgeJobState == 0) {
