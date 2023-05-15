@@ -19,7 +19,7 @@ contract DEFYTransformLoot is Pausable, AccessControl {
     bytes32 public constant OPENER_ROLE = keccak256("OPENER_ROLE");
 
     // Mapping from IDEFYLoot to validity contract condition
-    mapping(IDEFYLoot => bool) private validLootContracts;
+    mapping(address => bool) private validLootContracts;
 
     // Event indexed by operative address
     event TransformLoot(
@@ -45,10 +45,10 @@ contract DEFYTransformLoot is Pausable, AccessControl {
         uint256[] calldata outputLootAmounts,
         uint256[] calldata inputLootIds,
         uint256[] calldata inputLootAmounts
-    ) public onlyRole(OPENER_ROLE) {
+    ) public onlyRole(OPENER_ROLE) whenNotPaused {
         // require call is made to a valid loot contract
         require(
-            validLootContracts[lootContract] == true,
+            validLootContracts[address(lootContract)],
             "DEFYTransformLoot: Loot contract not valid"
         );
 
@@ -107,24 +107,24 @@ contract DEFYTransformLoot is Pausable, AccessControl {
     function getLootContractValidity(
         IDEFYLoot lootContract
     ) public view returns (bool) {
-        return validLootContracts[lootContract];
+        return validLootContracts[address(lootContract)];
     }
 
     /**
      * @dev Approves an IDEFYLoot contract address for forging.
      */
     function approveLootContract(
-        IDEFYLoot iDEFYLoot
+        IDEFYLoot lootContract
     ) public onlyRole(DEFAULT_ADMIN_ROLE) {
-        validLootContracts[iDEFYLoot] = true;
+        validLootContracts[address(lootContract)] = true;
     }
 
     /**
      * @dev Revokes an IDEFYLoot contract address for forging.
      */
     function revokeLootContract(
-        IDEFYLoot iDEFYLoot
+        IDEFYLoot lootContract
     ) public onlyRole(DEFAULT_ADMIN_ROLE) {
-        validLootContracts[iDEFYLoot] = false;
+        validLootContracts[address(lootContract)] = false;
     }
 }
