@@ -35,7 +35,7 @@ contract DEFYTransformLoot is Pausable, AccessControl {
     }
 
     /**
-     * @dev Burns the input crate item
+     * @dev Burns the input loot items
      *      Mints the output loot items
      */
     function transformLoot(
@@ -76,7 +76,7 @@ contract DEFYTransformLoot is Pausable, AccessControl {
             );
         }
 
-        // burn crate input items
+        // burn input items
         for (uint i = 0; i < inputLootIds.length; i++) {
             lootContract.burnToken(operativeAddress, inputLootIds[i], inputLootAmounts[i]);
         }
